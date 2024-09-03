@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Courses{% endblock title %}
+
+{% block body %}
+<div class="container mt-2 mb-4">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Courses</li>
+        </ol>
+    </nav>
+    <h3 class="mb-4">Explore Our Free Courses Catalog</h3>
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <img src="{{course.thumbnail}}" class="card-img-top" alt="{{course.name}}">
+                <div class="card-body">
+                  <h5 class="card-title">{{course.name}}</h5>
+                  <p class="card-text">{{course.description}}</p>
+                  <a href="/course/{{course.slug}}" class="btn btn-primary">Watch Now</a>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock body %}

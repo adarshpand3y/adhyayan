@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{course.name}}{% endblock title %}
+
+{% block body %}
+<div class="container my-2">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+            <li class="breadcrumb-item active">{{course.name}}</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-center">
+            <div>
+                <h2>{{course.name}}</h2>
+                <p class="lead">{{course.description}}</p>
+                <a href="/course/{{course.slug}}/{{first_slug}}" class="btn btn-lg btn-primary">Start Watching Now</a>
+            </div>
+        </div>
+        <div class="col-md-6 p-4">
+            <img class="img-fluid rounded" src="{{course.thumbnail}}" alt="Course thumbnail">
+        </div>
+    </div>
+</div>
+
+<div class="bg-light p-4">
+    <div class="container">
+        <h3 class="text-center">Lectures in this course</h3>
+
+
+        <div class="list-group my-4">
+            {% for lecture in lectures %}
+            <a href="/course/{{course.slug}}/{{lecture.slug}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                {{lecture.name}}
+                <span class="badge bg-primary rounded-pill">{{lecture.length}}</span>
+            </a>
+            {% endfor %}
+        </div>
+
+
+    </div>
+</div>
+{% endblock body %}
