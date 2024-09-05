@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Course, Lecture
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import AlbumImage, Course, Lecture
 
 # Create your views here.
 def index(request):
@@ -27,8 +27,13 @@ def services(request):
 def about(request):
     return render(request, "about.html")
 
-def album(request):
-    return render(request, "album.html")
+def album_redirect(request):
+    return redirect("/album/1")
+
+def album(request, page=1):
+    print(page)
+    images = AlbumImage.objects.all()
+    return render(request, "album.html", {"images": images})
 
 def login(request):
     return render(request, "login.html")

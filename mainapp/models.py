@@ -21,6 +21,9 @@ def generate_unique_slug(base_slug, model_class):
     return slug
 
 # Create your models here.
+class AlbumImage(models.Model):
+    image = models.ImageField()
+
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
