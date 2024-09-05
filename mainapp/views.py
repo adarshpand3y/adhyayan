@@ -20,3 +20,18 @@ def lecture(request, courseslug, lectureslug):
     lectures_in_course = Lecture.objects.filter(course=course)
     context = {"course": course, "lecture": lecture, "lectures": lectures_in_course}
     return render(request, "lecture.html", context)
+
+def services(request):
+    return render(request, "services.html")
+
+def about(request):
+    return render(request, "about.html")
+
+def album(request):
+    return render(request, "album.html")
+
+def login(request):
+    return render(request, "login.html")
+
+def logout(request):
+    return render(request, "logout.html")
