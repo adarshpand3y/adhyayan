@@ -44,8 +44,8 @@
         </ol>
     </nav>
     <!-- <div class="d-flex align-items-center justify-content-between"> -->
-        <h3 class="">Explore Our Album</h3>
-        <h6 class="text-muted p-0 mb-4">Showing page 1 of 10</h6>
+    <h3 class="">Explore Our Album</h3>
+    <h6 class="text-muted p-0 mb-4">Showing page {{images.number}} of {{last_page}}</h6>
     <!-- </div> -->
     <div class="row">
         {% for image in images %}
@@ -58,11 +58,20 @@
     </div>
 
     <div class="btn-grp d-flex justify-content-center w-100 my-2">
-        <a href="#" class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center" aria-current="page">01</a>
-        <a href="#" class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center active">01</a>
-        <a href="#" class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center">10</a>
-      </div>
-    <p class="text-muted text-center">Showing page 1 of 10</p>
+        {% if images.has_previous %}
+            <a href="/album/{{images.previous_page_number}}" class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center" aria-current="page"><i class="fa-solid fa-angle-left"></i></a>
+        {% else %}
+            <button disabled class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center" aria-current="page"><i class="fa-solid fa-angle-left"></i></button>
+        {% endif %}
+        <a href="#"
+            class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center active">{{images.number}}</a>
+        {% if images.has_next %}
+            <a href="/album/{{images.next_page_number}}" class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center" aria-current="page"><i class="fa-solid fa-angle-right"></i></a>
+        {% else %}
+            <button disabled class="m-2 rounded btn btn-primary d-flex align-items-center justify-content-center" aria-current="page"><i class="fa-solid fa-angle-right"></i></button>
+        {% endif %}
+    </div>
+    <p class="text-muted text-center">Showing page {{images.number}} of {{last_page}}</p>
 </div>
 
 <!-- Modal -->
@@ -70,7 +79,8 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-body p-0">
-                <button type="button" class="btn-close position-absolute top-0 end-0 p-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close position-absolute top-0 end-0 p-2" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
                 <img id="modalImg" class="img-fluid rounded" src="" alt="">
             </div>
         </div>

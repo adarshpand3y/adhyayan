@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import AlbumImage, Course, Lecture
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def index(request):
@@ -31,9 +32,21 @@ def album_redirect(request):
     return redirect("/album/1")
 
 def album(request, page=1):
-    print(page)
-    images = AlbumImage.objects.all()
-    return render(request, "album.html", {"images": images})
+    IMAGES_PER_PAGE = 12
+    images = AlbumImage.objects.all().order_by('-id')
+    p = Paginator(images, IMAGES_PER_PAGE)
+    try:
+        images = p.get_page(page)
+    except PageNotAnInteger:
+        images = p.page(1)
+    except EmptyPage:
+        images = p.page(p.num_pages)
+    context = {
+        'images': images,
+        'current_page': page,
+        'last_page': p.num_pages
+        }
+    return render(request, "album.html", context)
 
 def login(request):
     return render(request, "login.html")

@@ -3,12 +3,6 @@ from django.utils.text import slugify
 import random
 import string
 
-
-def generate_random_string(length=5):
-    characters = string.ascii_letters + string.digits
-    random_string = ''.join(random.choice(characters) for _ in range(length))
-    return random_string
-
 def generate_unique_slug(base_slug, model_class):
     """
     Generate a unique slug by appending a random string if necessary.
@@ -46,7 +40,7 @@ class Course(models.Model):
 
 class Lecture(models.Model):
     name = models.CharField(max_length=100)
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, default=generate_random_string())
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
     url = models.CharField(max_length=11)
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=True)
     length = models.CharField(max_length=20, editable=True, default="1hr 20min")
