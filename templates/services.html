@@ -2,8 +2,295 @@
 
 {% block title %}Services{% endblock title %}
 
+{% block headscripts %}
+<!-- React and ReactDOM from CDN -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<!-- Babel for JSX support -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+{% endblock headscripts %}
+
 {% block body %}
+<style>
+    .table,
+    .card-shadow {
+        box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px !important;
+    }
+</style>
 <div class="container">
-    <h1>Services Page</h1>
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Services</li>
+        </ol>
+    </nav>
+
+    <div id="root"></div>
 </div>
+
+<script type="text/babel">
+    const generalServices = [
+        { id: 1, name: "Full kundli analysis", price: 21000 },
+        { id: 2, name: "Career/money consultation", price: 5000 },
+        { id: 3, name: "Marriage/relationship consultation", price: 5000 },
+        { id: 4, name: "Health consultation", price: 5000 },
+        { id: 5, name: "Education consultation", price: 5000 },
+        { id: 6, name: "Business name consultation", price: 21000 },
+        { id: 7, name: "Name correction", price: 7000 },
+        { id: 8, name: "New name for baby or self", price: 21000 },
+        { id: 9, name: "Full numerology analysis", price: 21000 },
+        { id: 10, name: "Mobile numerology", price: 5000 }
+    ];
+
+    const yantraServices = [
+        { id: 1, name: "Business", price: 5000 },
+        { id: 2, name: "Money", price: 2100 },
+        { id: 3, name: "Luck", price: 2100 },
+        { id: 4, name: "Love", price: 2100 },
+        { id: 5, name: "Happiness", price: 2100 },
+        { id: 6, name: "Fulfilment of desire", price: 5000 }
+    ];
+
+    const vastuServices = [
+        { id: 1, name: "Home (below 2100 sq. ft)", price: 30000 },
+        { id: 2, name: "Office (below 2100 sq. ft)", price: 30000 },
+        { id: 3, name: "Factory", price: "Enquire on WhatsApp" },
+        { id: 4, name: "Shop (per sq. ft)", price: 30 }
+    ];
+
+    const Cart = () => {
+        const [cart, setCart] = React.useState(JSON.parse(localStorage.getItem("cart")) || []);
+
+        const formatNumber = (number) => {
+            return new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(number)
+        };
+
+        const addToCart = (service) => {
+            console.log(service);
+            setCart(prevCart => {
+                const itemIndex = prevCart.findIndex(item => item.id === service.id);
+                const updatedCart = itemIndex >= 0
+                    ? prevCart.map(item =>
+                        item.id === service.id ? { ...item, quantity: item.quantity + 1 } : item
+                    )
+                    : [...prevCart, { ...service, quantity: 1 }];
+                localStorage.setItem("cart", JSON.stringify(updatedCart));
+                return updatedCart;
+            });
+        };
+
+        const updateQuantity = (id, newQuantity) => {
+            console.log("Update", id, newQuantity);
+            if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
+            setCart(prevCart => {
+                const updatedCart = prevCart.map(item =>
+                    item.id === id ? { ...item, quantity: newQuantity } : item
+                );
+                localStorage.setItem("cart", JSON.stringify(updatedCart));
+                return updatedCart;
+            });
+        };
+
+        const removeFromCart = (id) => {
+            setCart(prevCart => {
+                const updatedCart = prevCart.filter(item => item.id !== id);
+                localStorage.setItem("cart", JSON.stringify(updatedCart));
+                return updatedCart;
+            });
+        };
+
+        const getTotal = () => {
+            let total = 0;
+            let hasFactory = false;
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                if (item.name === "Factory") hasFactory = true;
+                else total += item.price * item.quantity;
+            }
+            total = formatNumber(total);
+            return hasFactory ? total + " and Factory charges" : total;
+        };
+
+        const cartItemsToText = () => {
+            if (!Array.isArray(cart) || cart.length === 0) return 'Cart is empty';
+
+            // Calculate the total price and format each item
+            let total = 0;
+            let hasFactory = false;
+            const itemStrings = cart.map(item => {
+                if (item.name === "Factory") {
+                    hasFactory = true;
+                    return `- ${item.name} - Rs. ${item.price} X ${item.quantity}`;
+                }
+                else {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+                    return `- ${item.name} - Rs. ${item.price} X ${item.quantity}`;
+                }
+            });
+
+            // Adding Extra message
+            const messageString = "Hey I would like to avail the following services:-";
+
+            // Format the total amount
+            const totalString = `Total: Rs. ${formatNumber(total)}${hasFactory ? " and Factory charges" : ""}`;
+
+            // Join all item strings with newlines and append the total
+            return messageString + "\n\n" + itemStrings.join('\n') + '\n\n' + totalString;
+        }
+
+
+        return (
+            <div>
+                <h3>Services we offer</h3>
+                <p className="lead mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Atque fuga beatae assumenda corporis
+                    quibusdam quae reiciendis officia explicabo? Ad, voluptatibus!</p>
+                <table className="table table-striped table-hover mb-4">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Charges (In Rs.)</th>
+                            <th scope="col">Add to cart</th>
+                        </tr>
+                    </thead>
+                    <tbody className="table-group-divider">
+                        {generalServices.map(service => (
+                            <tr key={service.id}>
+                                <th scope="row">{service.id}</th>
+                                <td>{service.name}</td>
+                                <td>Rs. {formatNumber(service.price)}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-sm btn-primary"
+                                        onClick={() => addToCart(service)}
+                                    >
+                                        Add to cart
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <h4 className="mb-0">Yantra</h4>
+                <p className="lead fs-5 mb-4">Some description about yantra</p>
+                <table className="table table-striped table-hover mb-4">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Charges (In Rs.)</th>
+                            <th scope="col">Add to cart</th>
+                        </tr>
+                    </thead>
+                    <tbody className="table-group-divider">
+                        {yantraServices.map(service => (
+                            <tr key={service.id}>
+                                <th scope="row">{service.id}</th>
+                                <td>{service.name}</td>
+                                <td>Rs. {formatNumber(service.price)}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-sm btn-primary"
+                                        onClick={() => addToCart(service)}
+                                    >
+                                        Add to cart
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <h4 className="mb-0">Vastu</h4>
+                <p className="lead fs-5 mb-4">Some description about vastu</p>
+                <table className="table table-striped table-hover mb-4">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Charges (In Rs.)</th>
+                            <th scope="col">Add to cart</th>
+                        </tr>
+                    </thead>
+                    <tbody className="table-group-divider">
+                        {vastuServices.map(service => (
+                            <tr key={service.id}>
+                                <th scope="row">{service.id}</th>
+                                <td>{service.name}</td>
+                                <td>{service.name === "Factory" ? "Enquire on WhatsApp" : "Rs. " + formatNumber(service.price)}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-sm btn-primary"
+                                        onClick={() => addToCart(service)}
+                                    >
+                                        Add to cart
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                {
+                    cart.length > 0 ?
+                        <>
+                            <h4 className="mb-0">Cart</h4>
+                            <p className="lead fs-5 mb-4">Please review your cart items and proceed to checkout</p>
+                            <ul className="list-group mb-4">
+                                {cart.map(item => (
+                                    <li className="list-group-item" key={item.id}>
+                                        <div className="row">
+                                            <div className="col-md-6"><p className="mb-0 p-2">{item.name}</p></div>
+                                            <div className="col-md-3"><p className="mb-0 p-2">{item.price}</p></div>
+                                            <div className="col-md-2">
+                                                <input
+                                                    required
+                                                    type="number"
+                                                    min="1"
+                                                    value={item.quantity}
+                                                    onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
+                                                    className="form-control"
+                                                />
+                                            </div>
+                                            <div className="col-md-1">
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={() => removeFromCart(item.id)}
+                                                >
+                                                    <i className="fa-regular fa-trash-can"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                            <h4>Total: Rs. {getTotal()}</h4>
+                            {/* <textarea className="w-100" name="" id="" value={cartItemsToText()} readOnly></textarea> */}
+                            <p className="text-muted">You will be redirected to WhatsApp on checkout</p>
+                            <a href={`https://wa.me/919990355372?text=${encodeURI(cartItemsToText())}`} className="btn btn-primary mb-4" target="_blank">Checkout!</a>
+                        </>
+                        :
+                        <>
+                            <h4 className="mb-0">Cart empty</h4>
+                            <p className="lead fs-5 mb-4">Please add some items to cart before checkout.</p>
+                        </>
+                }
+            </div>
+        );
+    };
+
+    // ReactDOM.render(<Cart />, document.getElementById('root'));
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(
+        <React.StrictMode>
+            <Cart />
+        </React.StrictMode>
+    );
+
+
+</script>
 {% endblock body %}
