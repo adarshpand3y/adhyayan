@@ -43,9 +43,6 @@ def lecture(request, courseslug, lectureslug):
 def services(request):
     return render(request, "services.html")
 
-def about(request):
-    return render(request, "about.html")
-
 def album_redirect(request):
     return redirect("/album/1")
 
