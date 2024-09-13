@@ -17,7 +17,7 @@
             <div>
                 <h2>{{course.name}}</h2>
                 <p class="lead">{{course.description}}</p>
-                <a href="/course/{{course.slug}}/{{first_slug}}" class="btn btn-lg btn-primary">Start Watching Now</a>
+                <a href="/course/free/{{course.slug}}/{{first_slug}}" class="btn btn-lg btn-primary">Start Watching Now</a>
             </div>
         </div>
         <div class="col-md-6 p-4">
@@ -33,7 +33,7 @@
 
         <div class="list-group my-4">
             {% for lecture in lectures %}
-            <a href="/course/{{course.slug}}/{{lecture.slug}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <a href="/course/free/{{course.slug}}/{{lecture.slug}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 {{lecture.name}}
                 <span class="badge bg-primary rounded-pill">{{lecture.length}}</span>
             </a>

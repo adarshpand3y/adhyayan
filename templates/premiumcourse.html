@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{course.name}} | Adhyayan Premium Course{% endblock title %}
+
+{% block body %}
+
+<div class="container my-2">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+            <li class="breadcrumb-item active">Premium {{course.name}}</li>
+        </ol>
+    </nav>
+    <h2>{{course.name}}</h2>
+
+    <div class="row">
+        <div class="col-lg-8 col-md-12">
+            <p class="lead fs-4">{{course.one_line_description}}</p>
+            {% for point in description_array %}
+            <p>{{point}}</p>
+            {% endfor %}
+            <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
+            <div class="alert alert-dismissible alert-info">
+                <h4>Elligibility</h4>
+                <p>{{elligibility_array.0}}</p>
+                <a href="{{elligibility_array.2}}" class="btn btn-primary">{{elligibility_array.1}}</a>
+            </div>
+            
+            
+            <h4>Key highlights</h4>
+            <ul class="list-unstyled">
+                {% for point in key_highlights_array %}
+                <li class="my-1"><span class="text-success me-2"><i class="fa-regular fa-circle-check"></i></span>{{point}}</li>
+                {% endfor %}
+            </ul>
+            <h4>Why learn from this course?</h4>
+            <ul class="list-unstyled">
+                {% for point in why_learn_array %}
+                <li class="my-1"><span class="text-success me-2"><i class="fa-solid fa-angle-right"></i></span>{{point}}</li>
+                {% endfor %}
+            </ul>
+            <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="sticky-lg-top py-4">
+
+                <div class="card">
+                    <img src="{{course.thumbnail.url}}" class="card-img-top" alt="{{course.name}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{course.name}}</h5>
+                        <p class="card-text">{{course.one_line_description}}</p>
+                        <ul class="list-unstyled">
+                            <li class="my-2"><span class="text-success me-2"><i class="fa-regular fa-clock"></i></span>{{course.duration}} duration</li>
+                            <li class="my-2"><span class="text-success me-2"><i class="fa-solid fa-video"></i></span>{{course.mode}}</li>
+                            <li class="my-2"><span class="text-success me-2"><i class="fa-solid fa-graduation-cap"></i></span>{{course.length}}</li>
+                            <li class="my-2"><span class="text-success ms-1 me-2"><i class="fa-solid fa-indian-rupee-sign"></i></span><span class="format_with_comma">{{course.price}}</span>/-</li>
+                        </ul>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <button class="btn btn-primary w-100" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

@@ -1,19 +1,37 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import AlbumImage, Course, Lecture
+from .models import AlbumImage, Course, Lecture, PremiumCourse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def index(request):
-    return render(request, "index.html")
+    images = AlbumImage.objects.all().order_by('-id')[:4]
+    return render(request, "index.html", {"images": images})
 
 def courses(reqeust):
     courses = Course.objects.all()
-    return render(reqeust, "courses.html", {"courses": courses})
+    premium_courses = PremiumCourse.objects.all()
+    return render(reqeust, "courses.html", {"courses": courses, "premium_courses": premium_courses})
 
 def course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     lectures = Lecture.objects.filter(course=course)
     return render(request, "course.html", {"course": course, "lectures": lectures, "first_slug": lectures[0].slug})
+
+def premium_course(request, slug):
+    course = get_object_or_404(PremiumCourse, slug=slug)
+    description_array = [point for point in course.description.split("\r\n") if point]
+    elligibility_array = [point for point in course.elligibility.split("\r\n") if point]
+    key_highlights_array = [point for point in course.key_highlights.split("\r\n") if point]
+    why_learn_array = [point for point in course.why_learn.split("\r\n") if point]
+    print(elligibility_array)
+    context = {
+        "course": course,
+        "description_array": description_array,
+        "elligibility_array": elligibility_array,
+        "key_highlights_array": key_highlights_array,
+        "why_learn_array": why_learn_array
+    }
+    return render(request, "premiumcourse.html", context)
 
 def lecture(request, courseslug, lectureslug):
     lecture = Lecture.objects.get(slug=lectureslug)

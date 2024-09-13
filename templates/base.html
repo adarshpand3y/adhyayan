@@ -5,7 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://bootswatch.com/5/zephyr/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <title>{% block title %}{% endblock title %} | Adhyayan</title>
   {% block headscripts %}{% endblock headscripts %}
 </head>
@@ -112,14 +114,11 @@
             <a class="nav-link" href="/services">Services</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/about">About</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/album">Album</a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="btn btn-outline-primary" href="/login">Login</a>
-          </li>
+          </li> -->
           <!-- <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
           </li> -->
@@ -131,124 +130,125 @@
       </div>
     </div>
   </nav>
-  
+
   <div class="min-ht">
     {% block body %}{% endblock body %}
   </div>
 
   <!-- Footer -->
-<footer class="text-center text-lg-start bg-body-tertiary text-muted">
-  <!-- Section: Social media -->
-  <section class="p-4 border-bottom border-top">
-    <div class="container d-flex justify-content-center justify-content-lg-between">
+  <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+    <!-- Section: Social media -->
 
-      <!-- Left -->
-      <div class="me-5 d-none d-lg-block">
-        <span>Get connected with us on social networks:</span>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="pt-2 border-top">
+      <div class="container text-center text-md-start mt-5">
+        <!-- Grid row -->
+        <div class="row mt-3">
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              <i class="fa-solid fa-code me-3"></i>Created By
+            </h6>
+            <p class="fs-bold">Created with &#10084; && &#9749;</p>
+            <p class="fs-bold">by <a class="text-decoration-none" href="/">Adarsh Pandey</a>.</p>
+            <p><a href="mailto:mail.apandey2001@gmail.com">mail.apandey2001@gmail.com</a></p>
+            <p><a href="tel:+917003646817">+91 7003646817</a></p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Services
+            </h6>
+            <p>
+              <a href="#!" class="text-reset">All services</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">General</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Yantra</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Vastu</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Useful links
+            </h6>
+            <p>
+              <a href="/" class="text-reset">Home</a>
+            </p>
+            <p>
+              <a href="/courses" class="text-reset">Courses</a>
+            </p>
+            <p>
+              <a href="/services" class="text-reset">Services</a>
+            </p>
+            <p>
+              <a href="/album" class="text-reset">Album</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+            <p><i class="fas fa-home me-3"></i> New York, NY 10012, US</p>
+            <p>
+              <i class="fas fa-envelope me-3"></i>
+              <a href="mailto:info@example.com">info@example.com</a>
+            </p>
+            <p><i class="fas fa-brands fa-whatsapp me-3"></i></i> + 01 234 567 89</p>
+            <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
       </div>
-      <!-- Left -->
-      
-      <!-- Right -->
-      <div>
-        <a href="" class="me-4 text-reset"><i class="fab fa-facebook-f"></i></a>
-        <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
-        <a href="" class="me-4 text-reset"><i class="fab fa-google"></i></a>
-        <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>
-        <a href="" class="me-4 text-reset"><i class="fab fa-linkedin"></i></a>
-        <a href="" class="me-4 text-reset"><i class="fab fa-github"></i></a>
-      </div>
-      <!-- Right -->
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+      © 2024 Copyright:
+      <a class="text-reset fw-bold text-decoration-none" href="/">Vishal Mishra</a>
     </div>
-  </section>
-  <!-- Section: Social media -->
+    <!-- Copyright -->
+  </footer>
+  <!-- Footer -->
 
-  <!-- Section: Links  -->
-  <section class="">
-    <div class="container text-center text-md-start mt-5">
-      <!-- Grid row -->
-      <div class="row mt-3">
-        <!-- Grid column -->
-        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-          <!-- Content -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            <i class="fa-solid fa-code me-3"></i>Created By
-          </h6>
-          <p class="fs-bold">Created with &#10084; && &#9749;</p>
-          <p class="fs-bold">by <a class="text-decoration-none" href="/">Adarsh Pandey</a>.</p>
-          <p><a href="mailto:mail.apandey2001@gmail.com">mail.apandey2001@gmail.com</a></p>
-          <p><a href="tel:+917003646817">+91 7003646817</a></p>
-        </div>
-        <!-- Grid column -->
+  <script>
+    const formatNumberWithComma = (number) => {
+      return new Intl.NumberFormat('en-IN').format(number);
+    };
 
-        <!-- Grid column -->
-        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            Products
-          </h6>
-          <p>
-            <a href="#!" class="text-reset">Angular</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">React</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Vue</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Laravel</a>
-          </p>
-        </div>
-        <!-- Grid column -->
+    const enrollCourseOnWhatsapp = (courseName) => {
+      const encodedMessage = encodeURIComponent('Hey I want to enroll in ' + courseName);
+      const whatsappNumber = '919990355372'; // Replace with your WhatsApp number
+      const whatsappLink = 'https://wa.me/' + whatsappNumber + '?text=' + encodedMessage;
 
-        <!-- Grid column -->
-        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            Useful links
-          </h6>
-          <p>
-            <a href="#!" class="text-reset">Courses</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Services</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">About</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Album</a>
-          </p>
-        </div>
-        <!-- Grid column -->
+      // Open the WhatsApp link in a new tab or window
+      window.open(whatsappLink, '_blank');
+    }
 
-        <!-- Grid column -->
-        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
-          <p><i class="fas fa-home me-3"></i> New York, NY 10012, US</p>
-          <p>
-            <i class="fas fa-envelope me-3"></i>
-            <a href="mailto:info@example.com">info@example.com</a>
-          </p>
-          <p><i class="fas fa-brands fa-whatsapp me-3"></i></i> + 01 234 567 89</p>
-          <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
-        </div>
-        <!-- Grid column -->
-      </div>
-      <!-- Grid row -->
-    </div>
-  </section>
-  <!-- Section: Links  -->
-
-  <!-- Copyright -->
-  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-    © 2024 Copyright:
-    <a class="text-reset fw-bold text-decoration-none" href="/">Vishal Mishra</a>
-  </div>
-  <!-- Copyright -->
-</footer>
-<!-- Footer -->
+    window.addEventListener("load", () => {
+      Array.from(document.getElementsByClassName("format_with_comma")).forEach(element => {
+        element.innerText = formatNumberWithComma(element.innerText);
+      });;
+    })
+  </script>
 
 
   <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"

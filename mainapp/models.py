@@ -16,7 +16,7 @@ def generate_unique_slug(base_slug, model_class):
 
 # Create your models here.
 class AlbumImage(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(upload_to='album')
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -53,4 +53,28 @@ class Lecture(models.Model):
             # Generate a base slug from the course name
             base_slug = slugify(self.name)
             self.slug = generate_unique_slug(base_slug, Lecture)
+        super().save(*args, **kwargs)
+
+class PremiumCourse(models.Model):
+    name = models.CharField(max_length=100)
+    one_line_description = models.CharField(max_length=100)
+    description = models.TextField()
+    duration = models.CharField(max_length=50, default="3 months")
+    mode = models.CharField(max_length=100, default="Live + Recorded")
+    length = models.CharField(max_length=100, default="70+ lectures")
+    elligibility = models.TextField()
+    why_learn = models.TextField()
+    key_highlights = models.TextField()
+    price = models.IntegerField()
+    thumbnail = models.ImageField(upload_to='courses')
+    slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=False)
+
+    def __str__(self) -> str:
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Generate a base slug from the course name
+            base_slug = slugify(self.name)
+            self.slug = generate_unique_slug(base_slug, PremiumCourse)
         super().save(*args, **kwargs)

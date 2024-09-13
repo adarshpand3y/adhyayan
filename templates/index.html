@@ -28,45 +28,48 @@
     }
 
     .btn-primary-pulse {
-      animation: primary-pulse 4s infinite;
+        animation: primary-pulse 4s infinite;
     }
 
     .btn-primary-pulse:hover {
-      animation: none;
+        animation: none;
     }
 
     @keyframes primary-pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 1);
-      }
-      30% {
-        box-shadow: 0 0 0 10px rgba(var(--bs-primary-rgb), 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0);
-      }
+        0% {
+            box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 1);
+        }
+
+        30% {
+            box-shadow: 0 0 0 10px rgba(var(--bs-primary-rgb), 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(var(--bs-primary-rgb), 0);
+        }
     }
 </style>
 
 <div class="gradient-background">
 
     <div class="container">
-        <div class="row py-5">
+        <div class="row py-3">
             <div class="col-md-6 py-5 d-flex align-items-center">
                 <div>
                     <h1 class="fw-bold">Learn & become the</h1>
                     <h1 class="fw-bold"><span class="text-primary">Top 1%</span> astrologer</h1>
                     <a href="/courses"
-                        class="btn btn-lg btn-primary my-2 hover-shadow hvr-shutter-out-horizontal btn-primary-pulse">Explore Our Courses
+                        class="btn btn-lg btn-primary my-2 hover-shadow hvr-shutter-out-horizontal btn-primary-pulse">Explore
+                        Our Courses
                         <span>
                             <i class="fa-solid fa-angle-right"></i>
                         </span></a>
                 </div>
             </div>
-            <div class="col-md-6 py-5">
+            <div class="col-md-6">
                 <div class="py-5">
                     <img class="img-fluid rounded my-shadow"
-                        src="https://img.youtube.com/vi/JM4Elni2M2U/maxresdefault.jpg" alt="">
+                        src="/static/home_main.jpg" alt="">
                 </div>
             </div>
         </div>
@@ -78,22 +81,102 @@
         <h2 class="text-center fw-bold narrow-text">India's most loved astrology community &#10084;</h2>
         <div class="row justify-content-center p-5 pb-0">
             <div class="col-sm-6 col-md-3 p-3">
-                <h3 class="fw-bold"><span>
-                    <i class="fa-solid fa-users"></i>
-                </span>1000+</h3>
+                <h3 class="fw-bold"><span><i class="fa-solid fa-users"></i></span>1000+</h3>
                 <h6 class="small">Happy Learners</h6>
             </div>
             <div class="col-sm-6 col-md-3 p-3">
-                <h3 class="fw-bold"><span>
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </span>100+</h3>
+                <h3 class="fw-bold"><span><i class="fa-solid fa-graduation-cap"></i></span>100+</h3>
                 <h6 class="small">Satisfied Customers</h6>
             </div>
             <div class="col-sm-6 col-md-3 p-3">
-                <h3 class="fw-bold"><span>
-                    <i class="fa-solid fa-clock"></i>
-                </span>200+</h3>
+                <h3 class="fw-bold"><span><i class="fa-solid fa-clock"></i></span>200+</h3>
                 <h6 class="small">Hours of content</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .image-container {
+        width: 100%;
+        padding-top: 100%;
+        /* Creates a square aspect ratio */
+        position: relative;
+        /* For positioning the image inside */
+        overflow: hidden;
+        /* Ensures that overflowed image parts are hidden */
+    }
+
+    .image-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Ensures the image covers the container without distortion */
+    }
+
+    .image-container img:hover {
+        transform: scale(1.1);
+        transition: transform 0.1s ease-out;
+    }
+
+    .btn-grp a {
+        width: 40px;
+        height: 40px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center fw-bold narrow-text">Explore our album &#128248;</h2>
+    <div class="row">
+        {% for image in images %}
+        <div class="col-md-6 col-lg-3 col-xl-3 p-2 rounded">
+            <div class="image-container rounded">
+                <img class="img-fluid" src="{{ image.image.url }}" alt="Adhyayan Album Image">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <center>
+        <a href="/album"
+        class="btn btn-lg btn-primary my-2 hover-shadow hvr-shutter-out-horizontal btn-primary-pulse">  
+        Our album
+        <span>
+            <i class="fa-solid fa-angle-right"></i>
+        </span></a>
+    </center>
+</div>
+
+<div class="mt-4" style="background-color: #d4e5f0;">
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-md-6 py-5 d-flex align-items-center">
+                <div>
+                    <h2 class="">Acharaya Vishal Mishra</h2>
+                    <p>Acharya ji is an Expert Astrologer, Numerologist, Vastu Consultant & Reiki Master. He has shifted from CA to Occult Industry as per the calling of the Universe. He is a passionate teacher and has an unique style of giving consultations. He focusses and works more upon the Energy fields using a totally different approach. Students who have learned from him are well established Consultants in the market earning in Lakhs in this profession. The Clients who have taken consultations from him have never left him since the time they have associated.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-5">
+                    <img class="img-fluid rounded my-shadow"
+                        src="/static/about1.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-md-6">
+                <div class="p-5">
+                    <img class="img-fluid rounded my-shadow"
+                        src="/static/about2.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-md-6 py-5 d-flex align-items-center">
+                <div>
+                    <h2 class="">Adhyayan</h2>
+                    <p>The aim of this Institution is to teach ancient sciences like VASTU, ASTROLOGY, NUMEROLOGY with respect to today’s time (Desh, Kaal, Patra). This makes us different from the league as we teach sutras which are relevant in today’s life & scenario. For Example - Rahu in 12th house in any chart was treated as DESH NIKALA YOG in Vedic Astrology. But in today’s time we want to connect with the World & explore at large. Parents want their children to study abroad. People want to be settled abroad or away from their Native place. So, as per today’s scenario, this DESH NIKALA YOG is what everyone desires for. We can say that reading the Sutras as per Current time & scenario is much more effective and the only way by which you can do accurate consultations.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -103,7 +186,7 @@
     <h3 class="text-center fw-bold narrow-text">Connect with us</h3>
     <div class="row justify-content-center">
         <div class="col-sm-12 col-md-6 col-lg-4 my-2">
-            <a href="/courses" class="card p-5 h-100 text-decoration-none">
+            <a href="https://www.youtube.com/@Adhyayan.officially" target="_blank" class="card p-5 h-100 text-decoration-none">
                 <div class="card-body text-center">
                     <span class="text-danger">
                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
@@ -118,7 +201,7 @@
             </a>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-4 my-2">
-            <a href="/courses" class="card p-5 h-100 text-decoration-none">
+            <a href="https://www.instagram.com/adhyayan_officially/" target="_blank" class="card p-5 h-100 text-decoration-none">
                 <div class="card-body text-center">
                     <span style="color: #ea3170">
                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
@@ -132,7 +215,7 @@
                 </div>
             </a>
         </div>
-        <a href="/courses" class="col-sm-12 col-md-6 col-lg-4 my-2 text-decoration-none">
+        <a href="https://t.me/adhyayanofficially" target="_blank" class="col-sm-12 col-md-6 col-lg-4 my-2 text-decoration-none">
             <div class="card p-5 h-100">
                 <div class="card-body text-center">
                     <span style="color: #03a9f4;">
@@ -147,7 +230,7 @@
                 </div>
             </div>
         </a>
-        <a href="/courses" class="col-sm-12 col-md-6 col-lg-4 my-2 text-decoration-none">
+        <a href="https://www.facebook.com/people/Adhyayan/100093590052703/" target="_blank" class="col-sm-12 col-md-6 col-lg-4 my-2 text-decoration-none">
             <div class="card p-5 h-100">
                 <div class="card-body text-center">
                     <span style="color: #1877F2;">

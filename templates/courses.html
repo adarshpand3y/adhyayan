@@ -11,6 +11,27 @@
             <li class="breadcrumb-item active">Courses</li>
         </ol>
     </nav>
+
+    <h3 class="mb-4">Explore Our Premium Courses Catalog</h3>
+    <div class="row">
+        {% for course in premium_courses %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <img src="{{course.thumbnail.url}}" class="card-img-top" alt="{{course.name}}">
+                <div class="card-body">
+                  <h5 class="card-title">{{course.name}}</h5>
+                  <p class="card-text">{{course.one_line_description}}</p>
+                  <p class="card-text lead">Rs. <span class="format_with_comma">{{course.price}}</span></p>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <a class="btn btn-primary" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now</a>
+                      <a href="/course/premium/{{course.slug}}" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+    </div>
+
     <h3 class="mb-4">Explore Our Free Courses Catalog</h3>
     <div class="row">
         {% for course in courses %}
@@ -20,11 +41,12 @@
                 <div class="card-body">
                   <h5 class="card-title">{{course.name}}</h5>
                   <p class="card-text">{{course.description}}</p>
-                  <a href="/course/{{course.slug}}" class="btn btn-primary">Watch Now</a>
+                  <a href="/course/free/{{course.slug}}" class="btn btn-primary">Watch Now</a>
                 </div>
               </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
 {% endblock body %}
