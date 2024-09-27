@@ -31,7 +31,7 @@
 
 <script type="text/babel">
     const generalServices = [
-        { id: 1, name: "Full kundli analysis", price: 21000 },
+        { id: 1, name: "Full kundli analysis", price: 30000 },
         { id: 2, name: "Career/money consultation", price: 5000 },
         { id: 3, name: "Marriage/relationship consultation", price: 5000 },
         { id: 4, name: "Health consultation", price: 5000 },
@@ -44,19 +44,19 @@
     ];
 
     const yantraServices = [
-        { id: 1, name: "Business", price: 5000 },
-        { id: 2, name: "Money", price: 2100 },
-        { id: 3, name: "Luck", price: 2100 },
-        { id: 4, name: "Love", price: 2100 },
-        { id: 5, name: "Happiness", price: 2100 },
-        { id: 6, name: "Fulfilment of desire", price: 5000 }
+        { id: 11, name: "Business", price: 5000 },
+        { id: 12, name: "Money", price: 2100 },
+        { id: 13, name: "Luck", price: 2100 },
+        { id: 14, name: "Love", price: 2100 },
+        { id: 15, name: "Happiness", price: 2100 },
+        { id: 16, name: "Fulfilment of desire", price: 5000 }
     ];
 
     const vastuServices = [
-        { id: 1, name: "Home (below 2100 sq. ft)", price: 30000 },
-        { id: 2, name: "Office (below 2100 sq. ft)", price: 30000 },
-        { id: 3, name: "Factory", price: "Enquire on WhatsApp" },
-        { id: 4, name: "Shop (per sq. ft)", price: 30 }
+        { id: 17, name: "Home (below 2100 sq. ft)", price: 30000 },
+        { id: 18, name: "Office (below 2100 sq. ft)", price: 30000 },
+        { id: 19, name: "Factory", price: "Enquire on WhatsApp" },
+        { id: 20, name: "Shop (per sq. ft)", price: 30 }
     ];
 
     const Cart = () => {
@@ -67,7 +67,6 @@
         };
 
         const addToCart = (service) => {
-            console.log(service);
             setCart(prevCart => {
                 const itemIndex = prevCart.findIndex(item => item.id === service.id);
                 const updatedCart = itemIndex >= 0
@@ -81,7 +80,6 @@
         };
 
         const updateQuantity = (id, newQuantity) => {
-            console.log("Update", id, newQuantity);
             if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
             setCart(prevCart => {
                 const updatedCart = prevCart.map(item =>
@@ -144,8 +142,7 @@
         return (
             <div>
                 <h3>Services we offer</h3>
-                <p className="lead mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Atque fuga beatae assumenda corporis
-                    quibusdam quae reiciendis officia explicabo? Ad, voluptatibus!</p>
+                <p className="lead mb-4">Our each service is special & unique in itself as we strive hard to make it more user friendly and relevant to the current time advancements.</p>
                 <table className="table table-striped table-hover mb-4">
                     <thead>
                         <tr>
@@ -156,9 +153,9 @@
                         </tr>
                     </thead>
                     <tbody className="table-group-divider">
-                        {generalServices.map(service => (
+                        {generalServices.map((service, index) => (
                             <tr key={service.id}>
-                                <th scope="row">{service.id}</th>
+                                <th scope="row">{index+1}</th>
                                 <td>{service.name}</td>
                                 <td>Rs. {formatNumber(service.price)}</td>
                                 <td>
@@ -175,7 +172,7 @@
                 </table>
 
                 <h4 className="mb-0">Yantra</h4>
-                <p className="lead fs-5 mb-4">Some description about yantra</p>
+                <p className="lead fs-5 mb-4">A special pattern programming that induces energies in your aura to work in your favour!</p>
                 <table className="table table-striped table-hover mb-4">
                     <thead>
                         <tr>
@@ -186,9 +183,9 @@
                         </tr>
                     </thead>
                     <tbody className="table-group-divider">
-                        {yantraServices.map(service => (
+                        {yantraServices.map((service, index) => (
                             <tr key={service.id}>
-                                <th scope="row">{service.id}</th>
+                                <th scope="row">{index+1}</th>
                                 <td>{service.name}</td>
                                 <td>Rs. {formatNumber(service.price)}</td>
                                 <td>
@@ -205,7 +202,7 @@
                 </table>
 
                 <h4 className="mb-0">Vastu</h4>
-                <p className="lead fs-5 mb-4">Some description about vastu</p>
+                <p className="lead fs-5 mb-4">Design the Life of your Dreams through the Alchemy of Space!</p>
                 <table className="table table-striped table-hover mb-4">
                     <thead>
                         <tr>
@@ -216,9 +213,9 @@
                         </tr>
                     </thead>
                     <tbody className="table-group-divider">
-                        {vastuServices.map(service => (
+                        {vastuServices.map((service, index) => (
                             <tr key={service.id}>
-                                <th scope="row">{service.id}</th>
+                                <th scope="row">{index+1}</th>
                                 <td>{service.name}</td>
                                 <td>{service.name === "Factory" ? "Enquire on WhatsApp" : "Rs. " + formatNumber(service.price)}</td>
                                 <td>
