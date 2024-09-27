@@ -28,9 +28,9 @@ class Course(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if not self.thumbnail:
-            lecture = Lecture.objects.filter(course=self)[0]
-            self.thumbnail = f"https://img.youtube.com/vi/{lecture.url}/maxresdefault.jpg"
+        # if not self.thumbnail:
+        #     lecture = Lecture.objects.filter(course=self)[0]
+        #     self.thumbnail = f"https://img.youtube.com/vi/{lecture.url}/maxresdefault.jpg"
 
         if not self.slug:
             # Generate a base slug from the course name

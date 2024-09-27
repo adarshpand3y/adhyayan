@@ -45,9 +45,9 @@
             <div class="list-group">
                 {% for lecture_item in lectures %}
                 {% if lecture_item.slug == lecture.slug %}
-                <a href="/course/{{course.slug}}/{{lecture_item.slug}}" class="list-group-item list-group-item-primary  list-group-item-action">{{lecture_item.name}}</a>
+                <a href="/course/free/{{course.slug}}/{{lecture_item.slug}}" class="list-group-item list-group-item-primary  list-group-item-action">{{lecture_item.name}}</a>
                 {% else  %}
-                <a href="/course/{{course.slug}}/{{lecture_item.slug}}" class="list-group-item list-group-item-action">{{lecture_item.name}}</a>
+                <a href="/course/free/{{course.slug}}/{{lecture_item.slug}}" class="list-group-item list-group-item-action">{{lecture_item.name}}</a>
                 {% endif %}
                 {% endfor %}
             </div>
