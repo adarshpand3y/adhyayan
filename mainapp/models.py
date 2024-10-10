@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from cloudinary.models import CloudinaryField
 import random
 import string
 
@@ -16,7 +17,7 @@ def generate_unique_slug(base_slug, model_class):
 
 # Create your models here.
 class AlbumImage(models.Model):
-    image = models.ImageField(upload_to='album')
+    image = CloudinaryField('image')
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -66,7 +67,7 @@ class PremiumCourse(models.Model):
     why_learn = models.TextField()
     key_highlights = models.TextField()
     price = models.IntegerField()
-    thumbnail = models.ImageField(upload_to='courses')
+    thumbnail = CloudinaryField('image')
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=False)
 
     def __str__(self) -> str:
