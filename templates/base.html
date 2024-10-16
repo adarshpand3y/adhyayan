@@ -8,7 +8,25 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <title>{% block title %}{% endblock title %} | Adhyayan</title>
+  <!-- HTML Meta Tags -->
+  <title>{% block title %}{% endblock title %} | Adhyayan - Learn astrology, vastu, numerology and much more.</title>
+  <meta name="description" content="{% block metadesc %}{% endblock metadesc %} - Learn astrology, vastu, numerology, and much more.">
+
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block ogtitle %}{% endblock ogtitle %} | Adhyayan - Learn astrology, vastu, numerology and much more.">
+  <meta property="og:description" content="{% block ogdesc %}{% endblock ogdesc %} - Learn astrology, vastu, numerology, and much more.">
+  <meta property="og:image" content="{% block ogimage %}https://res.cloudinary.com/dikcxc44t/image/upload/v1729071177/Adhyayan_opengraph_ufnkod.jpg{% endblock ogimage %}">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="{{ request.get_host }}">
+  <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+  <meta name="twitter:title" content="{% block twtitle %}{% endblock twtitle %} | Adhyayan - Learn astrology, vastu, numerology and much more.">
+  <meta name="twitter:description" content="{% block twdesc %}{% endblock twdesc %} - Learn astrology, vastu, numerology, and much more.">
+  <meta name="twitter:image" content="{% block twimage %}https://res.cloudinary.com/dikcxc44t/image/upload/v1729071177/Adhyayan_opengraph_ufnkod.jpg{% endblock twimage %}">
+
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   {% block headscripts %}{% endblock headscripts %}
 </head>

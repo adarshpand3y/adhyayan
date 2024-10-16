@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}{{lecture.name}}{% endblock title %}
+{% block metadesc %}{{lecture.name}}{% endblock metadesc %}
+
+{% block ogtitle %}{{lecture.name}}{% endblock ogtitle %}
+{% block ogdesc %}{{lecture.name}}{% endblock ogdesc %}
+{% block ogimage %}https://img.youtube.com/vi/{{lecture.url}}/maxresdefault.jpg{% endblock ogimage %}
+
+{% block twtitle %}{{lecture.name}}{% endblock twtitle %}
+{% block twdesc %}{{lecture.name}}{% endblock twdesc %}
+{% block twimage %}https://img.youtube.com/vi/{{lecture.url}}/maxresdefault.jpg{% endblock twimage %}
 
 {% block body %}
 <style>

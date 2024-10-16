@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}{{course.name}}{% endblock title %}
+{% block metadesc %}{{course.name}}{% endblock metadesc %}
+
+{% block ogtitle %}{{course.name}}{% endblock ogtitle %}
+{% block ogdesc %}{{course.name}}{% endblock ogdesc %}
+{% block ogimage %}{{course.thumbnail}}{% endblock ogimage %}
+
+{% block twtitle %}{{course.name}}{% endblock twtitle %}
+{% block twdesc %}{{course.name}}{% endblock twdesc %}
+{% block twimage %}{{course.thumbnail}}{% endblock twimage %}
 
 {% block body %}
 <div class="container my-2">

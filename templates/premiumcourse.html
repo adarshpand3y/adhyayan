@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}{{course.name}} | Adhyayan Premium Course{% endblock title %}
+{% block metadesc %}{{course.one_line_description}}{% endblock metadesc %}
+
+{% block ogtitle %}{{course.name}}{% endblock ogtitle %}
+{% block ogdesc %}{{course.one_line_description}}{% endblock ogdesc %}
+{% block ogimage %}{{course.thumbnail.url}}{% endblock ogimage %}
+
+{% block twtitle %}{{course.name}}{% endblock twtitle %}
+{% block twdesc %}{{course.one_line_description}}{% endblock twdesc %}
+{% block twimage %}{{course.thumbnail.url}}{% endblock twimage %}
 
 {% block body %}
 
