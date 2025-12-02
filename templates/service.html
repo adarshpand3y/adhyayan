@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Services{% endblock title %}
+{% block metadesc %}{{service.one_line_description}}{% endblock metadesc %}
+
+{% block ogtitle %}Services{% endblock ogtitle %}
+{% block ogdesc %}{{service.one_line_description}}{% endblock ogdesc %}
+{% block ogimage %}{{service.image.url}}{% endblock ogimage %}
+
+{% block twtitle %}Services{% endblock twtitle %}
+{% block twdesc %}{{service.one_line_description}}{% endblock twdesc %}
+{% block twimage %}{{service.image.url}}{% endblock twimage %}
+
+{% block headscripts %}
+{% endblock headscripts %}
+
+{% block body %}
+<div class="container mt-2 mb-4">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/services">Services</a></li>
+            <li class="breadcrumb-item active">{{service.name}}</li>
+        </ol>
+    </nav>
+
+    <h2 class="fw-bold">{{service.name}}</h2>
+    <div class="row">
+        <div class="col-lg-8 col-md-12">
+            <img class="img-fluid rounded mt-2 mb-4 d-block d-lg-none" src="{{service.image.url}}" alt="{{service.name}}">
+            {% for point in description_array %}
+            <p>{{point}}</p>
+            {% endfor %}
+            <button class="btn btn-lg btn-primary mb-4" onclick='buyServiceOnWhatsapp("{{service.name}}")'>Buy Now (Rs. <span class="format_with_comma">{{service.price}}</span>/-)</button>
+            
+            
+            <div class="p-4 rounded-4 mb-4 custom-shadow" style="background-color: #e9ecef;">
+                <h4 class="fw-bold">Benefits:-</h4>
+                <ul class="list-unstyled">
+                    {% for point in benefits_array %}
+                    <li class="my-2"><span class="text-success me-2"><i class="fa-solid fa-angle-right"></i></span><span class="fw-bold">{{point.0}}:</span> {{point.1}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <h4 class="fw-bold">How we will help you:-</h4>
+            <ul class="list-unstyled">
+                {% for point in steps_array %}
+                <li class="my-1"><span class="text-success me-2"><i class="fa-solid fa-angle-right"></i></span><span class="fw-bold">{{point.0}}:</span> {{point.1}}</li>
+                {% endfor %}
+            </ul>
+            <button class="btn btn-lg btn-primary mb-4" onclick='buyServiceOnWhatsapp("{{service.name}}")'>Buy Now (Rs. <span class="format_with_comma">{{service.price}}</span>/-)</button>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="sticky-lg-top py-4">
+
+                <div class="card custom-shadow">
+                    <img src="{{service.image.url}}" class="card-img-top" alt="{{service.name}}">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{service.name}}</h5>
+                        <p class="card-text">{{service.one_line_description}}</p>
+                        <ul class="list-unstyled">
+                            <li class="my-2"><h5 class="fw-bold"><span class="ms-1 me-2"><i class="fa-solid fa-indian-rupee-sign"></i></span><span class="format_with_comma">{{service.price}}</span>/-</h5></li>
+                        </ul>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <button class="btn btn-primary w-100" onclick='buyServiceOnWhatsapp("{{service.name}}")'>Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Services{% endblock title %}
+{% block metadesc %}Services{% endblock metadesc %}
+
+{% block ogtitle %}Services{% endblock ogtitle %}
+{% block ogdesc %}Services{% endblock ogdesc %}
+
+{% block twtitle %}Services{% endblock twtitle %}
+{% block twdesc %}Services{% endblock twdesc %}
+
+{% block headscripts %}
+{% endblock headscripts %}
+
+{% block body %}
+<div class="container mt-2 mb-4">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Services</li>
+        </ol>
+    </nav>
+
+    <h3>Services we offer</h3>
+    <p class="lead mb-4">Our each service is special & unique in itself as we strive hard to make it more user friendly and relevant to the current time advancements.</p>
+    <div class="row">
+        {% for service in services %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card h-100 d-flex flex-column">
+            <img src="{{service.image.url}}" class="card-img-top" alt="{{service.name}}">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{service.name}}</h5>
+              <p class="card-text">{{service.one_line_description}}</p>
+              <p class="card-text lead">Rs. <span class="format_with_comma">{{service.price}}</span></p>
+              <div class="mt-auto d-flex justify-content-between">
+                <a class="btn btn-primary" onclick='buyServiceOnWhatsapp("{{service.name}}")'>Buy Now</a>
+                <a href="/service/{{service.slug}}" class="btn btn-primary">Learn More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock body %}

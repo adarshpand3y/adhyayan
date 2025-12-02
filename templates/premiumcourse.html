@@ -19,31 +19,37 @@
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
-            <li class="breadcrumb-item active">Premium {{course.name}}</li>
+            <li class="breadcrumb-item active">{{course.name}}</li>
         </ol>
     </nav>
-    <h2>{{course.name}}</h2>
+    <h2 class="fw-bold">{{course.name}}</h2>
 
     <div class="row">
         <div class="col-lg-8 col-md-12">
+            <img class="img-fluid rounded mt-2 mb-4 d-block d-lg-none" src="{{course.thumbnail.url}}" alt="{{course.name}}">
             {% for point in description_array %}
             <p>{{point}}</p>
             {% endfor %}
             <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
             <div class="alert alert-dismissible alert-info">
-                <h4>Elligibility</h4>
+                <h4 class="fw-bold">Elligibility</h4>
                 <p>{{elligibility_array.0}}</p>
                 <a href="{{elligibility_array.2}}" class="btn btn-primary">{{elligibility_array.1}}</a>
             </div>
             
             
-            <h4>Key highlights</h4>
+            <h4 class="fw-bold">Key highlights</h4>
             <ul class="list-unstyled">
                 {% for point in key_highlights_array %}
                 <li class="my-1"><span class="text-success me-2"><i class="fa-regular fa-circle-check"></i></span>{{point}}</li>
                 {% endfor %}
             </ul>
-            <h4>Why learn from this course?</h4>
+
+            <div class="alert alert-success" role="alert">
+                For expert guidance on courses and queries, please WhatsApp <a class="fw-bold text-success link-underline-success" href="https://api.whatsapp.com/send?phone=919953371571" target="_blank">+919953371571</a> now.
+            </div>
+
+            <h4 class="fw-bold">Why learn from this course?</h4>
             <ul class="list-unstyled">
                 {% for point in why_learn_array %}
                 <li class="my-1"><span class="text-success me-2"><i class="fa-solid fa-angle-right"></i></span>{{point}}</li>
@@ -54,10 +60,10 @@
         <div class="col-lg-4 col-md-12">
             <div class="sticky-lg-top py-4">
 
-                <div class="card">
+                <div class="card custom-shadow">
                     <img src="{{course.thumbnail.url}}" class="card-img-top" alt="{{course.name}}">
                     <div class="card-body">
-                        <h5 class="card-title">{{course.name}}</h5>
+                        <h5 class="card-title fw-bold">{{course.name}}</h5>
                         <p class="card-text">{{course.one_line_description}}</p>
                         <ul class="list-unstyled">
                             <li class="my-2"><span class="text-success me-2"><i class="fa-regular fa-clock"></i></span>{{course.duration}} duration</li>

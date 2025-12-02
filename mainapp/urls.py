@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.index, name="home"),
     path('courses', views.courses, name="courses"),
     path('services', views.services, name="services"),
+    path('service/<slug:slug>', views.service, name="service"),
     path('album', views.album_redirect, name="album_redirect"),
     path('album/<int:page>', views.album, name="album"),
     path('login', views.login, name="login"),

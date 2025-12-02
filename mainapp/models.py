@@ -79,3 +79,23 @@ class PremiumCourse(models.Model):
             base_slug = slugify(self.name)
             self.slug = generate_unique_slug(base_slug, PremiumCourse)
         super().save(*args, **kwargs)
+
+class Service(models.Model):
+    slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=False)
+    name = models.CharField(max_length=100)
+    one_line_description = models.CharField(max_length=100)
+    description = models.TextField()
+    benefits = models.TextField()
+    steps = models.TextField()
+    price = models.IntegerField()
+    image = CloudinaryField('image')
+
+    def __str__(self) -> str:
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Generate a base slug from the course name
+            base_slug = slugify(self.name)
+            self.slug = generate_unique_slug(base_slug, Service)
+        super().save(*args, **kwargs)
