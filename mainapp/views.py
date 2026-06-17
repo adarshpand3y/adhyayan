@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import AlbumImage, Course, Lecture, PremiumCourse, Service
+from .models import AlbumImage, Course, Lecture, PremiumCourse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
@@ -41,22 +41,7 @@ def lecture(request, courseslug, lectureslug):
     return render(request, "lecture.html", context)
 
 def services(request):
-    services = Service.objects.all()
-    return render(request, "services_new.html", {"services": services})
-
-def service(request, slug):
-    service = Service.objects.filter(slug=slug)[0]
-    description_array = [point for point in service.description.split("\r\n") if point]
-    benefits_array = [[part.strip() for part in point.split(":")] for point in service.benefits.split("\r\n") if point]
-    steps_array = [[part.strip() for part in point.split(":")] for point in service.steps.split("\r\n") if point]
-
-    context = {
-        "service": service,
-        "description_array": description_array,
-        "benefits_array": benefits_array,
-        "steps_array": steps_array
-    }
-    return render(request, "service.html", context)
+    return render(request, "services.html")
 
 def album_redirect(request):
     return redirect("/album/1")
