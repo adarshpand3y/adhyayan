@@ -10,22 +10,29 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- HTML Meta Tags -->
   <title>{% block title %}{% endblock title %} | Adhyayan - Learn astrology, vastu, numerology and much more.</title>
-  <meta name="description" content="{% block metadesc %}{% endblock metadesc %} - Learn astrology, vastu, numerology, and much more.">
+  <meta name="description"
+    content="{% block metadesc %}{% endblock metadesc %} - Learn astrology, vastu, numerology, and much more.">
 
   <!-- Facebook Meta Tags -->
   <meta property="og:url" content="{{ request.build_absolute_uri }}">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{% block ogtitle %}{% endblock ogtitle %} | Adhyayan - Learn astrology, vastu, numerology and much more.">
-  <meta property="og:description" content="{% block ogdesc %}{% endblock ogdesc %} - Learn astrology, vastu, numerology, and much more.">
-  <meta property="og:image" content="{% block ogimage %}https://res.cloudinary.com/dikcxc44t/image/upload/v1729071177/Adhyayan_opengraph_ufnkod.jpg{% endblock ogimage %}">
+  <meta property="og:title"
+    content="{% block ogtitle %}{% endblock ogtitle %} | Adhyayan - Learn astrology, vastu, numerology and much more.">
+  <meta property="og:description"
+    content="{% block ogdesc %}{% endblock ogdesc %} - Learn astrology, vastu, numerology, and much more.">
+  <meta property="og:image"
+    content="{% block ogimage %}https://res.cloudinary.com/dikcxc44t/image/upload/v1729071177/Adhyayan_opengraph_ufnkod.jpg{% endblock ogimage %}">
 
   <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta property="twitter:domain" content="{{ request.get_host }}">
   <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
-  <meta name="twitter:title" content="{% block twtitle %}{% endblock twtitle %} | Adhyayan - Learn astrology, vastu, numerology and much more.">
-  <meta name="twitter:description" content="{% block twdesc %}{% endblock twdesc %} - Learn astrology, vastu, numerology, and much more.">
-  <meta name="twitter:image" content="{% block twimage %}https://res.cloudinary.com/dikcxc44t/image/upload/v1729071177/Adhyayan_opengraph_ufnkod.jpg{% endblock twimage %}">
+  <meta name="twitter:title"
+    content="{% block twtitle %}{% endblock twtitle %} | Adhyayan - Learn astrology, vastu, numerology and much more.">
+  <meta name="twitter:description"
+    content="{% block twdesc %}{% endblock twdesc %} - Learn astrology, vastu, numerology, and much more.">
+  <meta name="twitter:image"
+    content="{% block twimage %}https://res.cloudinary.com/dikcxc44t/image/upload/v1729071177/Adhyayan_opengraph_ufnkod.jpg{% endblock twimage %}">
 
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   {% block headscripts %}{% endblock headscripts %}
@@ -50,65 +57,72 @@
       box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
     }
 
-      .hover-shadow:hover {
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
-        transition: box-shadow 0.2s;
-      }
+    .hover-shadow:hover {
+      box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
+      transition: box-shadow 0.2s;
+    }
 
-      /* Shutter Out Horizontal */
-      .hvr-shutter-out-horizontal {
-        display: inline-block;
-        vertical-align: middle;
-        -webkit-transform: perspective(1px) translateZ(0);
-        transform: perspective(1px) translateZ(0);
-        box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-        position: relative;
-        /* background: #e1e1e1; */
-        -webkit-transition-property: color;
-        transition-property: color;
-        -webkit-transition-duration: 0.3s;
-        transition-duration: 0.3s;
-      }
+    /* Shutter Out Horizontal */
+    .hvr-shutter-out-horizontal {
+      display: inline-block;
+      vertical-align: middle;
+      -webkit-transform: perspective(1px) translateZ(0);
+      transform: perspective(1px) translateZ(0);
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+      position: relative;
+      /* background: #e1e1e1; */
+      -webkit-transition-property: color;
+      transition-property: color;
+      -webkit-transition-duration: 0.3s;
+      transition-duration: 0.3s;
+    }
 
-      .hvr-shutter-out-horizontal:before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #0087ff;
-        -webkit-transform: scaleX(0);
-        transform: scaleX(0);
-        -webkit-transform-origin: 50%;
-        transform-origin: 50%;
-        -webkit-transition-property: transform;
-        transition-property: transform;
-        -webkit-transition-duration: 0.3s;
-        transition-duration: 0.3s;
-        -webkit-transition-timing-function: ease-out;
-        transition-timing-function: ease-out;
-        border-radius: 0.5rem;
-      }
+    .hvr-shutter-out-horizontal:before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0087ff;
+      -webkit-transform: scaleX(0);
+      transform: scaleX(0);
+      -webkit-transform-origin: 50%;
+      transform-origin: 50%;
+      -webkit-transition-property: transform;
+      transition-property: transform;
+      -webkit-transition-duration: 0.3s;
+      transition-duration: 0.3s;
+      -webkit-transition-timing-function: ease-out;
+      transition-timing-function: ease-out;
+      border-radius: 0.5rem;
+    }
 
-      .hvr-shutter-out-horizontal:hover,
-      .hvr-shutter-out-horizontal:focus,
-      .hvr-shutter-out-horizontal:active {
-        color: white;
-        border: 1px solid #0087ff;
-      }
+    .hvr-shutter-out-horizontal:hover,
+    .hvr-shutter-out-horizontal:focus,
+    .hvr-shutter-out-horizontal:active {
+      color: white;
+      border: 1px solid #0087ff;
+    }
 
-      .hvr-shutter-out-horizontal:hover:before,
-      .hvr-shutter-out-horizontal:focus:before,
-      .hvr-shutter-out-horizontal:active:before {
-        -webkit-transform: scaleX(1);
-        transform: scaleX(1);
-      }
+    .hvr-shutter-out-horizontal:hover:before,
+    .hvr-shutter-out-horizontal:focus:before,
+    .hvr-shutter-out-horizontal:active:before {
+      -webkit-transform: scaleX(1);
+      transform: scaleX(1);
+    }
+
+    .custom-shadow {
+      -webkit-box-shadow: 10px 10px 37px 11px rgba(51, 51, 51, 0.4);
+      -moz-box-shadow: 10px 10px 37px 11px rgba(51, 51, 51, 0.4);
+      box-shadow: 10px 10px 37px 11px rgba(51, 51, 51, 0.4);
+    }
   </style>
   <nav class="navbar navbar-expand-lg bg-body-tertiary bottom-shadow">
     <div class="container">
-      <a href="/"><img class="rounded" src="/static/adhyayan.png" alt="Adhyayan Logo" style="height: 50px; width: 50px;"></a>
+      <a href="/"><img class="rounded" src="/static/adhyayan.png" alt="Adhyayan Logo"
+          style="height: 50px; width: 50px;"></a>
       <a class="ms-2 navbar-brand" href="/">Adhyayan</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -159,15 +173,16 @@
         <!-- Grid row -->
         <div class="row mt-3">
           <!-- Grid column -->
-          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-            <!-- Content -->
-            <h6 class="text-uppercase fw-bold mb-4">
-              <i class="fa-solid fa-code me-3"></i>Created By
-            </h6>
-            <p class="fs-bold">Created with &#10084; && &#9749;</p>
-            <p class="fs-bold">by <a class="text-decoration-none" target="_blank" href="https://www.linkedin.com/in/adarshpand3y/">Adarsh Pandey</a>.</p>
-            <p><a href="mailto:mail.apandey2001@gmail.com">mail.apandey2001@gmail.com</a></p>
-            <p><a href="tel:+917003646817">+91 7003646817</a></p>
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+            <p><i class="fas fa-home me-3"></i>Kolkata, WB</p>
+            <p>
+              <i class="fas fa-envelope me-3"></i>
+              <a href="mailto:adhyayan.relations@gmail.com">adhyayan.relations@gmail.com</a>
+            </p>
+            <p><i class="fas fa-brands fa-whatsapp me-3"></i></i> +91 9953371571</p>
+            <p><i class="fas fa-phone me-3"></i> +91 9953371571</p>
           </div>
           <!-- Grid column -->
 
@@ -214,16 +229,16 @@
           <!-- Grid column -->
 
           <!-- Grid column -->
-          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-            <!-- Links -->
-            <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
-            <p><i class="fas fa-home me-3"></i>Kolkata, WB</p>
-            <p>
-              <i class="fas fa-envelope me-3"></i>
-              <a href="mailto:adhyayan.relations@gmail.com">adhyayan.relations@gmail.com</a>
-            </p>
-            <p><i class="fas fa-brands fa-whatsapp me-3"></i></i> +91 9953371571</p>
-            <p><i class="fas fa-phone me-3"></i> +91 9953371571</p>
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              <i class="fa-solid fa-code me-3"></i>Created By
+            </h6>
+            <p class="fs-bold">Created with &#10084; && &#9749;</p>
+            <p class="fs-bold">by <a class="text-decoration-none" target="_blank"
+                href="https://www.linkedin.com/in/adarshpand3y/">Adarsh Pandey</a>.</p>
+            <p><a href="mailto:mail.apandey2001@gmail.com">mail.apandey2001@gmail.com</a></p>
+            <p><a href="tel:+917003646817">+91 7003646817</a></p>
           </div>
           <!-- Grid column -->
         </div>
@@ -234,8 +249,8 @@
 
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-      © 2024 Copyright:
-      <a class="text-reset fw-bold text-decoration-none" href="/">Vishal Mishra</a>
+      © 2026 Copyright:
+      <a class="text-reset fw-bold text-decoration-none" href="/">Acharaya Vishal Mishra</a>
     </div>
     <!-- Copyright -->
   </footer>

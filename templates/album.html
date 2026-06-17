@@ -42,7 +42,7 @@
         height: 40px;
     }
 </style>
-<div class="container my-4">
+<div class="container mt-2 mb-4">
     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
         aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
@@ -83,12 +83,12 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <button type="button" class="btn-close position-absolute top-0 end-0 p-2" data-bs-dismiss="modal"
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90vw; justify-content: center;">
+        <div class="modal-content" style="width: fit-content;">
+            <div class="modal-body p-0 position-relative">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2 bg-white rounded-circle" data-bs-dismiss="modal"
                     aria-label="Close"></button>
-                <img id="modalImg" class="img-fluid rounded" src="" alt="">
+                <img id="modalImg" class="d-block rounded" style="max-height: 88vh; max-width: 88vw; width: auto; height: auto;" src="" alt="">
             </div>
         </div>
     </div>
