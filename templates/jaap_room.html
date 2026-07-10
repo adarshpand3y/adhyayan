@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}{{ session.name }}{% endblock title %}
+{% block metadesc %}{{ session.name }}{% endblock metadesc %}
+{% block ogtitle %}{{ session.name }}{% endblock ogtitle %}
+{% block ogdesc %}{{ session.name }}{% endblock ogdesc %}
+{% block twtitle %}{{ session.name }}{% endblock twtitle %}
+{% block twdesc %}{{ session.name }}{% endblock twdesc %}
+
+{% block body %}
+<style>
+    .tap-btn {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #ffe566, #ffc107);
+        border: none;
+        color: #5a3e00;
+        font-size: 2.8rem;
+        cursor: pointer;
+        transition: transform 0.08s, box-shadow 0.08s;
+        box-shadow: 0 10px 36px rgba(255, 193, 7, 0.55);
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    .tap-btn.tapped {
+        transform: scale(0.9);
+        box-shadow: 0 4px 16px rgba(255, 193, 7, 0.35);
+    }
+    .tap-btn.mala-complete {
+        animation: mala-burst 0.55s ease forwards;
+    }
+    @keyframes mala-burst {
+        0%   { transform: scale(1); }
+        40%  { transform: scale(1.14); box-shadow: 0 18px 60px rgba(255, 193, 7, 0.75); }
+        100% { transform: scale(1); }
+    }
+    .god-name { color: #ffc107; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.04em; }
+    .big-count { font-size: 5rem; font-weight: 800; line-height: 1; color: #212529; }
+    .rank-row.is-me { background-color: #fff8d6; }
+</style>
+
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'jaap_sessions' %}">Jaap</a></li>
+            <li class="breadcrumb-item active">{{ session.name }}</li>
+        </ol>
+    </nav>
+
+    {% if session.is_active %}
+    <!-- Chanting UI -->
+    <div class="text-center">
+        <h4 class="mb-1">{{ session.name }}</h4>
+        <div class="god-name mb-2">{{ session.god_name }}</div>
+        <p class="text-muted small mb-4">{{ participant_count }} participant{{ participant_count|pluralize }}</p>
+
+        <div class="big-count mb-1" id="counter">0</div>
+        <div class="text-muted mb-3" style="font-size: 0.9rem;">/ 108</div>
+
+        <div class="progress mb-4 mx-auto" style="height: 6px; max-width: 280px;">
+            <div class="progress-bar" id="progress"
+                 style="width: 0%; background-color: #ffc107; transition: width 0.08s;"></div>
+        </div>
+
+        <button class="tap-btn mb-4" id="tapBtn" onclick="handleTap()">
+            <i class="fa-solid fa-hands-praying"></i>
+        </button>
+
+        <div class="text-muted" style="font-size: 0.95rem;">
+            Malas completed this session:
+            <strong id="malaCount" style="color: #c9a000; font-size: 1.1rem;">{{ participant.mala_count|default:0 }}</strong>
+        </div>
+        <div class="text-muted small mt-2">Tap the button for each chant &mdash; a mala completes at 108.</div>
+        <div class="text-muted small mt-1">You can also press <kbd>Space</kbd> on your keyboard.</div>
+    </div>
+
+    <script>
+        const SESSION_ID = '{{ session.id }}';
+        const STORAGE_KEY = 'jaap_count_' + SESSION_ID;
+        const CSRF = '{{ csrf_token }}';
+
+        let count = parseInt(localStorage.getItem(STORAGE_KEY) || '0');
+
+        function updateDisplay() {
+            document.getElementById('counter').textContent = count;
+            document.getElementById('progress').style.width = ((count / 108) * 100) + '%';
+        }
+
+        let sending = false;
+
+        async function sendIncrement() {
+            sending = true;
+            const btn = document.getElementById('tapBtn');
+            btn.disabled = true;
+            try {
+                const r = await fetch('/jaap/' + SESSION_ID + '/increment', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': CSRF }
+                });
+                if (!r.ok) { localStorage.removeItem(STORAGE_KEY); window.location.href = '/jaap/' + SESSION_ID; return; }
+                const data = await r.json();
+                document.getElementById('malaCount').textContent = data.mala_count;
+            } catch {}
+            sending = false;
+            btn.disabled = false;
+        }
+
+        async function checkStatus() {
+            try {
+                const r = await fetch('/jaap/' + SESSION_ID + '/status');
+                const data = await r.json();
+                if (!data.is_active) { localStorage.removeItem(STORAGE_KEY); window.location.href = '/jaap/' + SESSION_ID; }
+            } catch {}
+        }
+
+        function handleTap() {
+            if (sending) return;
+            count++;
+            localStorage.setItem(STORAGE_KEY, count);
+
+            const btn = document.getElementById('tapBtn');
+            btn.classList.remove('tapped', 'mala-complete');
+            void btn.offsetWidth;
+
+            if (count >= 108) {
+                btn.classList.add('mala-complete');
+                count = 0;
+                localStorage.setItem(STORAGE_KEY, count);
+                sendIncrement();
+            } else {
+                btn.classList.add('tapped');
+                setTimeout(() => btn.classList.remove('tapped'), 150);
+            }
+
+            updateDisplay();
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.code === 'Space' && e.target === document.body) {
+                e.preventDefault();
+                handleTap();
+            }
+        });
+
+        updateDisplay();
+        setInterval(checkStatus, 15000);
+    </script>
+
+    {% else %}
+    <!-- Results -->
+    <h4 class="mb-1">{{ session.name }}</h4>
+    <p class="text-muted mb-4">{{ session.god_name }} &middot; {{ session.created_at|date:"d M Y" }} &middot; {{ participant_count }} participant{{ participant_count|pluralize }}</p>
+
+    {% if participants %}
+    <p class="text-muted mb-3">
+        Total malas chanted: <strong style="color: #c9a000;">{{ total_malas }}</strong>
+    </p>
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 60px;">#</th>
+                    <th>Name</th>
+                    <th class="text-end">No. of Malas</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in participants %}
+            <tr class="rank-row {% if p.user == user %}is-me{% endif %}">
+                <td class="text-muted fw-semibold">
+                    {% if forloop.counter == 1 %}1st
+                    {% elif forloop.counter == 2 %}2nd
+                    {% elif forloop.counter == 3 %}3rd
+                    {% else %}{{ forloop.counter }}th{% endif %}
+                </td>
+                <td>
+                    {{ p.user.first_name|default:p.user.username }}
+                    {% if p.user == user %}<span class="badge text-bg-warning ms-1 small">You</span>{% endif %}
+                </td>
+                <td class="text-end fw-semibold" style="color: #c9a000;">{{ p.mala_count }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+        <p>No participants recorded for this session.</p>
+    </div>
+    {% endif %}
+
+    <div class="text-center">
+        <a href="{% url 'jaap_sessions' %}" class="btn btn-outline-secondary mt-4">Back to Sessions</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}

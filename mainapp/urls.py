@@ -20,4 +20,8 @@ urlpatterns = [
     path('my-courses', views.my_courses, name="my_courses"),
     path('study/<slug:courseslug>', views.study, name="study"),
     path('study/<slug:courseslug>/<slug:lectureslug>', views.study_lecture, name="study_lecture"),
+    path('jaap', views.jaap_sessions, name="jaap_sessions"),
+    path('jaap/<uuid:session_id>', views.jaap_room, name="jaap_room"),
+    path('jaap/<uuid:session_id>/status', views.jaap_status, name="jaap_status"),
+    path('jaap/<uuid:session_id>/increment', views.jaap_increment, name="jaap_increment"),
 ]

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Jaap Sessions{% endblock title %}
+{% block metadesc %}Join a naam jaap session{% endblock metadesc %}
+{% block ogtitle %}Jaap Sessions{% endblock ogtitle %}
+{% block ogdesc %}Join a naam jaap session{% endblock ogdesc %}
+{% block twtitle %}Jaap Sessions{% endblock twtitle %}
+{% block twdesc %}Join a naam jaap session{% endblock twdesc %}
+
+{% block body %}
+<div class="container my-5">
+    <h4 class="mb-4">Naam Jaap Sessions</h4>
+
+    {% if active_sessions %}
+    <h6 class="text-uppercase text-muted small fw-semibold mb-3">Live Now</h6>
+    <div class="mb-5">
+        {% for session in active_sessions %}
+        <div class="card mb-3">
+        <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">{{ session.name }}</h5>
+                    <span class="text-muted small">{{ session.god_name }} &middot; {{ session.participant_count }} participant{{ session.participant_count|pluralize }}</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge rounded-pill text-bg-success px-3 py-2">Live</span>
+                    <a href="{% url 'jaap_room' session_id=session.id %}" class="btn btn-primary">Join</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not active_sessions and not upcoming_sessions %}
+        <div class="text-center py-5 text-muted">
+            <p class="mb-0">No active or upcoming sessions right now. Check back later.</p>
+        </div>
+    {% endif %}
+
+    {% if upcoming_sessions %}
+    <h6 class="text-uppercase text-muted small fw-semibold mb-3">Upcoming</h6>
+    <div class="mb-5">
+        {% for session in upcoming_sessions %}
+        <div class="card mb-3">
+        <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">{{ session.name }}</h5>
+                    <span class="text-muted small">{{ session.god_name }} &middot; {{ session.scheduled_at|date:"d M Y, g:i A" }} IST</span>
+                </div>
+                <span class="badge rounded-pill text-bg-secondary px-3 py-2">Upcoming</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if past_sessions %}
+    <h6 class="text-uppercase text-muted small fw-semibold mb-3">Past Sessions</h6>
+    {% for session in past_sessions %}
+    <div class="card mb-3">
+        <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+                <h6 class="mb-1">{{ session.name }}</h6>
+                <span class="text-muted small">{{ session.god_name }} &middot; {{ session.created_at|date:"d M Y" }} &middot; {{ session.participant_count }} participant{{ session.participant_count|pluralize }}</span>
+            </div>
+            <a href="{% url 'jaap_room' session_id=session.id %}" class="btn btn-outline-secondary btn-sm">View Results</a>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock body %}

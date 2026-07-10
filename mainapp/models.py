@@ -112,3 +112,28 @@ class EnrolledCourse(models.Model):
 
     class Meta:
         unique_together = ('user', 'course')
+
+class JaapSession(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=200)
+    god_name = models.CharField(default="Jai Shree Hari", max_length=100)
+    is_active = models.BooleanField(default=True)
+    scheduled_at = models.DateTimeField(null=True, blank=True, help_text="Set to a future time to show this session as upcoming before it goes live.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class JaapSessionParticipant(models.Model):
+    session = models.ForeignKey(JaapSession, on_delete=models.CASCADE, related_name='participants')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    mala_count = models.PositiveIntegerField(default=0)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('session', 'user')
+        ordering = ['-mala_count']
+
+    def __str__(self):
+        return f"{self.session.name} - {self.user.first_name or self.user.username} - {self.mala_count} malas"

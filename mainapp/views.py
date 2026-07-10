@@ -6,8 +6,12 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import AlbumImage, Course, EnrolledCourse, Lecture, PremiumCourse, PremiumLecture
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import AlbumImage, Course, EnrolledCourse, Lecture, PremiumCourse, PremiumLecture, JaapSession, JaapSessionParticipant
 from .r2 import get_master_manifest, get_sub_playlist_with_presigned_segments
+from django.db.models import Count, Sum
+from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -222,4 +226,48 @@ def study_lecture(request, courseslug, lectureslug):
         'manifest_url': f"/course/premium/{courseslug}/{lectureslug}/manifest.m3u8",
     }
     return render(request, 'study_lecture.html', context)
-    
+
+@login_required(login_url='/login')
+def jaap_sessions(request):
+    now = timezone.now()
+    active_sessions = JaapSession.objects.filter(is_active=True).annotate(participant_count=Count('participants')).order_by('-created_at')
+    upcoming_sessions = JaapSession.objects.filter(is_active=False, scheduled_at__gt=now).annotate(participant_count=Count('participants')).order_by('scheduled_at')
+    past_sessions = JaapSession.objects.filter(is_active=False).exclude(scheduled_at__gt=now).annotate(participant_count=Count('participants')).order_by('-created_at')[:10]
+    return render(request, 'jaap_sessions.html', {
+        'active_sessions': active_sessions,
+        'upcoming_sessions': upcoming_sessions,
+        'past_sessions': past_sessions,
+    })
+
+@login_required(login_url='/login')
+def jaap_room(request, session_id):
+    session = get_object_or_404(JaapSession, id=session_id)
+    participant = JaapSessionParticipant.objects.filter(session=session, user=request.user).first()
+    participants = None
+    total_malas = None
+    if not session.is_active:
+        participants = session.participants.select_related('user').order_by('-mala_count')
+        total_malas = participants.aggregate(total=Sum('mala_count'))['total'] or 0
+    participant_count = session.participants.count()
+    return render(request, 'jaap_room.html', {
+        'session': session,
+        'participant': participant,
+        'participants': participants,
+        'total_malas': total_malas,
+        'participant_count': participant_count,
+    })
+
+def jaap_status(request, session_id):
+    session = get_object_or_404(JaapSession, id=session_id)
+    return JsonResponse({'is_active': session.is_active})
+
+@require_POST
+@login_required(login_url='/login')
+def jaap_increment(request, session_id):
+    session = get_object_or_404(JaapSession, id=session_id, is_active=True)
+    participant, _ = JaapSessionParticipant.objects.get_or_create(
+        session=session, user=request.user
+    )
+    participant.mala_count += 1
+    participant.save()
+    return JsonResponse({'mala_count': participant.mala_count})

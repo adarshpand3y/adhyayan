@@ -40,6 +40,11 @@
 
 <body>
   <style>
+    p a {
+      text-decoration: none !important;
+      color: inherit;
+    }
+
     .min-ht {
       min-height: calc(100vh - 420px - 67px) !important;
     }
@@ -143,6 +148,9 @@
             <a class="nav-link" href="/album">Album</a>
           </li>
           {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'jaap_sessions' %}">Jaap</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'my_courses' %}">
               My Courses
