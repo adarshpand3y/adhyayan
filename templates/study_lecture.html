@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lecture.name }}{% endblock title %}
+{% block metadesc %}{{ lecture.name }} — {{ course.name }}{% endblock metadesc %}
+
+{% block ogtitle %}{{ lecture.name }}{% endblock ogtitle %}
+{% block ogdesc %}{{ lecture.name }} — {{ course.name }}{% endblock ogdesc %}
+
+{% block twtitle %}{{ lecture.name }}{% endblock twtitle %}
+{% block twdesc %}{{ lecture.name }} — {{ course.name }}{% endblock twdesc %}
+
+{% block body %}
+<div class="container mt-2">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'my_courses' %}">My Courses</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'study' courseslug=course.slug %}">{{ course.name }}</a></li>
+            <li class="breadcrumb-item active">{{ lecture.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Video column -->
+        <div class="col-lg-8">
+            <h4 class="mt-0 mb-3">{{ lecture.name }}</h4>
+            <mux-player src="{{ manifest_url }}" controls style="width:100%;aspect-ratio:16/9;--media-accent-color:#198754;"></mux-player>
+            <h5 class="mt-3 mb-3">About this lecture</h5>
+            <p class="text-muted small">
+                <i class="fa-solid fa-book me-1"></i>{{ course.name }}
+                {% if lecture.length %}
+                &nbsp;·&nbsp;<i class="fa-solid fa-clock me-1"></i>{{ lecture.length }}
+                {% endif %}
+            </p>
+            {% for item in lecture.description %}
+                <p>{{ item }}</p>
+            {% endfor %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+
+            <ul class="list-group">
+                <li class="list-group-item" style="background-color: #e2e3e5; border-color: #cbced1;">
+                    <h5 class="mb-0">{{ course.name }}</h5>
+                    <small class="text-muted">{{ lectures|length }} lecture{{ lectures|length|pluralize }}</small>
+                </li>
+                    {% for lec in lectures %}
+                    {% if lec.slug == lecture.slug %}
+                    <li class="list-group-item list-group-item-primary lecture-item d-flex justify-content-between align-items-center">
+                        <span class="me-2">{{ forloop.counter }}. {{ lec.name }}</span>
+                        {% if lec.length %}<small class="text-nowrap ms-2">{{ lec.length }}</small>{% endif %}
+                    </li>
+                    {% else %}
+                    <a href="{% url 'study_lecture' courseslug=course.slug lectureslug=lec.slug %}"
+                       class="list-group-item list-group-item-action lecture-item d-flex justify-content-between align-items-center">
+                        <span class="me-2 text-muted">{{ forloop.counter }}. {{ lec.name }}</span>
+                        {% if lec.length %}<small class="text-nowrap ms-2 text-muted">{{ lec.length }}</small>{% endif %}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mux/mux-player"></script>
+{% endblock body %}

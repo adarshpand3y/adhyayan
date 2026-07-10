@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}My Courses{% endblock title %}
+{% block metadesc %}Your courses{% endblock metadesc %}
+
+{% block ogtitle %}My Courses{% endblock ogtitle %}
+{% block ogdesc %}Your courses{% endblock ogdesc %}
+
+{% block twtitle %}My Courses{% endblock twtitle %}
+{% block twdesc %}Your courses{% endblock twdesc %}
+
+{% block body %}
+<div class="container my-5">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="row" style="min-height: 50vh;">
+        <div class="col-lg-8">
+            <h4 class="mb-3">My Courses</h4>
+            {% if enrolled_courses %}
+            <div class="row">
+
+            
+                {% for course in enrolled_courses %}
+                <div class="col-md-6 col-lg-6 mb-4">
+                    <div class="card h-100 d-flex flex-column">
+                        <img src="{{course.thumbnail.url}}" class="card-img-top" alt="{{course.name}}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{course.name}}</h5>
+                            <p class="card-text">{{course.one_line_description}}</p>
+                            <div class="mt-auto d-flex justify-content-between">
+                                <a class="btn btn-primary" href="{% url 'study' courseslug=course.slug %}">
+                                    Study
+                                </a>
+                                <a href="/course/premium/{{course.slug}}" class="btn btn-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+            {% else %}
+            <div class="p-4 text-center">
+                <p class="mb-1">You haven't enrolled in any courses yet.</p>
+                <a href="{% url 'courses' %}" class="btn btn-primary btn-sm mt-2">Browse Courses</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card p-4 text-center bottom-shadow">
+                <div class="mb-3">
+                    <i class="fa-solid fa-circle-user fa-5x text-primary"></i>
+                </div>
+                <h5>{{ user.first_name|default:user.username }}</h5>
+                <p class="text-muted mb-1">{{ user.email }}</p>
+                <p class="text-muted small">Member since {{ user.date_joined|date:"F Y" }}</p>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm mt-2">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

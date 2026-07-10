@@ -29,7 +29,11 @@
             {% for point in description_array %}
             <p>{{point}}</p>
             {% endfor %}
+            {% if is_enrolled %}
+            <a href="{% url 'study' courseslug=course.slug %}" class="btn btn-lg btn-success mb-4"><i class="fa-solid fa-play me-2"></i>Continue Learning</a>
+            {% else %}
             <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
+            {% endif %}
             <div class="alert alert-dismissible alert-info">
                 <h4 class="fw-bold">Elligibility</h4>
                 <p>{{elligibility_array.0}}</p>
@@ -54,7 +58,11 @@
                 <li class="my-1"><span class="text-success me-2"><i class="fa-solid fa-angle-right"></i></span>{{point}}</li>
                 {% endfor %}
             </ul>
+            {% if is_enrolled %}
+            <a href="{% url 'study' courseslug=course.slug %}" class="btn btn-lg btn-success mb-4"><i class="fa-solid fa-play me-2"></i>Continue Learning</a>
+            {% else %}
             <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
+            {% endif %}
         </div>
         <div class="col-lg-4 col-md-12">
             <div class="sticky-lg-top py-4">
@@ -71,7 +79,11 @@
                             <li class="my-2"><span class="text-success ms-1 me-2"><i class="fa-solid fa-indian-rupee-sign"></i></span><span class="format_with_comma">{{course.price}}</span>/-</li>
                         </ul>
                         <div class="d-flex align-items-center justify-content-between">
+                            {% if is_enrolled %}
+                            <a href="{% url 'study' courseslug=course.slug %}" class="btn btn-success w-100"><i class="fa-solid fa-play me-2"></i>Continue Learning</a>
+                            {% else %}
                             <button class="btn btn-primary w-100" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

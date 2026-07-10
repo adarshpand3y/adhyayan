@@ -1,0 +1,57 @@
+============== STEP 1: GENERATE KEY (run once per lecture) ==============
+
+$key = New-Object byte[] 16
+[Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($key)
+[System.IO.File]::WriteAllBytes("enc.key", $key)
+$keyHex = ($key | ForEach-Object { $_.ToString("x2") }) -join ""
+Write-Host "AES Key (hex) - paste this into PremiumLecture.aes_key in Django admin:"
+Write-Host $keyHex
+"https://placeholder/key`nenc.key" | Set-Content enc.keyinfo
+
+============== STEP 2: CONVERT (original quality) ==============
+
+Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force output | Out-Null; .\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe -i "input.mp4" `
+  -filter_complex "[0:v]split=4[v1][v2][v3][v4];[v1]scale=-2:1080[v1out];[v2]scale=-2:720[v2out];[v3]scale=-2:480[v3out];[v4]scale=-2:240[v4out]" `
+  -map "[v1out]" -map 0:a -c:v:0 libx264 -b:v:0 3500k -maxrate:v:0 3850k -bufsize:v:0 7000k -c:a:0 aac -b:a:0 192k `
+  -map "[v2out]" -map 0:a -c:v:1 libx264 -b:v:1 2000k -maxrate:v:1 2200k -bufsize:v:1 4000k -c:a:1 aac -b:a:1 128k `
+  -map "[v3out]" -map 0:a -c:v:2 libx264 -b:v:2 1000k -maxrate:v:2 1100k -bufsize:v:2 2000k -c:a:2 aac -b:a:2 128k `
+  -map "[v4out]" -map 0:a -c:v:3 libx264 -b:v:3 500k -maxrate:v:3 550k -bufsize:v:3 1000k -c:a:3 aac -b:a:3 64k `
+  -preset slow -profile:v main `
+  -hls_key_info_file enc.keyinfo `
+  -f hls -hls_time 6 -hls_playlist_type vod `
+  -hls_segment_filename "output/%v/segment%03d.ts" `
+  -master_pl_name "index.m3u8" `
+  -var_stream_map "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p v:3,a:3,name:240p" `
+  "output/%v/playlist.m3u8"
+
+============== LOW QUALITY ==============
+
+Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force output | Out-Null; .\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe -i "input.mp4" `
+  -filter_complex "[0:v]split=4[v1][v2][v3][v4];[v1]scale=-2:1080[v1out];[v2]scale=-2:720[v2out];[v3]scale=-2:480[v3out];[v4]scale=-2:240[v4out]" `
+  -map "[v1out]" -map 0:a -c:v:0 libx264 -crf:v:0 26 -maxrate:v:0 2000k -bufsize:v:0 4000k -c:a:0 aac -b:a:0 128k `
+  -map "[v2out]" -map 0:a -c:v:1 libx264 -crf:v:1 26 -maxrate:v:1 1200k -bufsize:v:1 2400k -c:a:1 aac -b:a:1 96k `
+  -map "[v3out]" -map 0:a -c:v:2 libx264 -crf:v:2 26 -maxrate:v:2 700k  -bufsize:v:2 1400k -c:a:2 aac -b:a:2 64k `
+  -map "[v4out]" -map 0:a -c:v:3 libx264 -crf:v:3 26 -maxrate:v:3 350k  -bufsize:v:3 700k  -c:a:3 aac -b:a:3 48k `
+  -preset slow -profile:v main `
+  -hls_key_info_file enc.keyinfo `
+  -f hls -hls_time 6 -hls_playlist_type vod `
+  -hls_segment_filename "output/%v/segment%03d.ts" `
+  -master_pl_name "index.m3u8" `
+  -var_stream_map "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p v:3,a:3,name:240p" `
+  "output/%v/playlist.m3u8"
+
+============== EVEN LOWER QUALITY ==============
+
+Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force output | Out-Null; .\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe -i "input.mp4" `
+  -filter_complex "[0:v]split=4[v1][v2][v3][v4];[v1]scale=-2:1080[v1out];[v2]scale=-2:720[v2out];[v3]scale=-2:480[v3out];[v4]scale=-2:240[v4out]" `
+  -map "[v1out]" -map 0:a -c:v:0 libx264 -crf:v:0 33 -maxrate:v:0 1100k -bufsize:v:0 2200k -c:a:0 aac -b:a:0 96k `
+  -map "[v2out]" -map 0:a -c:v:1 libx264 -crf:v:1 33 -maxrate:v:1 700k  -bufsize:v:1 1400k -c:a:1 aac -b:a:1 64k `
+  -map "[v3out]" -map 0:a -c:v:2 libx264 -crf:v:2 33 -maxrate:v:2 400k  -bufsize:v:2 800k  -c:a:2 aac -b:a:2 48k `
+  -map "[v4out]" -map 0:a -c:v:3 libx264 -crf:v:3 33 -maxrate:v:3 200k  -bufsize:v:3 400k  -c:a:3 aac -b:a:3 40k `
+  -preset slow -profile:v main `
+  -hls_key_info_file enc.keyinfo `
+  -f hls -hls_time 10 -hls_playlist_type vod `
+  -hls_segment_filename "output/%v/segment%03d.ts" `
+  -master_pl_name "index.m3u8" `
+  -var_stream_map "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p v:3,a:3,name:240p" `
+  "output/%v/playlist.m3u8"

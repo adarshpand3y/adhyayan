@@ -142,17 +142,24 @@
           <li class="nav-item">
             <a class="nav-link" href="/album">Album</a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="btn btn-outline-primary" href="/login">Login</a>
-          </li> -->
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
-          </li> -->
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'my_courses' %}">
+              My Courses
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+          </li>
+          {% endif %}
         </ul>
-        {% comment %} <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form> {% endcomment %}
       </div>
     </div>
   </nav>

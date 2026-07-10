@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock title %}
+{% block metadesc %}Sign Up{% endblock metadesc %}
+
+{% block ogtitle %}Sign Up{% endblock ogtitle %}
+{% block ogdesc %}Sign Up{% endblock ogdesc %}
+
+{% block twtitle %}Sign Up{% endblock twtitle %}
+{% block twdesc %}Sign Up{% endblock twdesc %}
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center my-4"
+    style="min-height: calc(100vh - 67px - 420px);">
+    <form class="card p-4" style="width: 22rem;" method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+        <h3 class="text-center mb-3">Sign Up</h3>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="nameInput" class="form-label">Name</label>
+            <input type="text" class="form-control" id="nameInput" name="name"
+                placeholder="Enter your name" value="{{ request.POST.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="emailInput" class="form-label">Email</label>
+            <input type="email" class="form-control" id="emailInput" name="email"
+                placeholder="Enter your email" value="{{ request.POST.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="passwordInput" class="form-label">Password</label>
+            <input type="password" class="form-control" id="passwordInput" name="password"
+                placeholder="Enter your password" required>
+            <ul class="mt-2 small mb-0" id="pwd-rules">
+                <li id="rule-len"     class="text-muted">At least 8 characters.</li>
+                <li id="rule-upper"   class="text-muted">At least one uppercase letter.</li>
+                <li id="rule-lower"   class="text-muted">At least one lowercase letter.</li>
+                <li id="rule-special" class="text-muted">At least one special character.</li>
+            </ul>
+        </div>
+        <div class="mb-3">
+            <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPasswordInput" name="confirm_password"
+                placeholder="Re-enter your password" required>
+            <div id="pwd-match" class="small mt-1"></div>
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Create Account</button>
+        <p class="text-center mt-3 mb-0 text-muted small">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </p>
+    </form>
+</div>
+<script>
+  const pwd = document.getElementById('passwordInput');
+  const confirm = document.getElementById('confirmPasswordInput');
+  const rules = {
+    'rule-len':     p => p.length >= 8,
+    'rule-upper':   p => /[A-Z]/.test(p),
+    'rule-lower':   p => /[a-z]/.test(p),
+    'rule-special': p => /[!@#$%^&*()\-_=+\[\]{}|;:,.<>?]/.test(p),
+  };
+
+  pwd.addEventListener('input', () => {
+    const val = pwd.value;
+    for (const [id, check] of Object.entries(rules)) {
+      const el = document.getElementById(id);
+      el.className = check(val) ? 'text-success' : 'text-danger';
+    }
+    checkMatch();
+  });
+
+  function checkMatch() {
+    const el = document.getElementById('pwd-match');
+    if (!confirm.value) { el.textContent = ''; return; }
+    const match = pwd.value === confirm.value;
+    el.textContent = match ? '✓ Passwords match' : '✗ Passwords do not match';
+    el.className = 'small mt-1 ' + (match ? 'text-success' : 'text-danger');
+  }
+
+  confirm.addEventListener('input', checkMatch);
+</script>
+{% endblock body %}

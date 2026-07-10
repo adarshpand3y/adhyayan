@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from cloudinary.models import CloudinaryField
@@ -56,6 +57,30 @@ class Lecture(models.Model):
             self.slug = generate_unique_slug(base_slug, Lecture)
         super().save(*args, **kwargs)
 
+class PremiumLecture(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100)
+    description = models.TextField(default="This is some default description.")
+    course = models.ForeignKey('PremiumCourse', on_delete=models.SET_NULL, null=True, blank=True)
+    r2_key = models.CharField(max_length=500, help_text="Path to the .m3u8 file in R2, e.g. courses/slug/lecture-1/index.m3u8")
+    aes_key = models.CharField(max_length=32, blank=True, help_text="Hex-encoded 16-byte AES-128 key from key generation step")
+    length = models.CharField(max_length=20, default="")
+    order = models.PositiveIntegerField(default=0)
+    slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=False)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            self.slug = generate_unique_slug(base_slug, PremiumLecture)
+        super().save(*args, **kwargs)
+
+
 class PremiumCourse(models.Model):
     name = models.CharField(max_length=100)
     one_line_description = models.CharField(max_length=100)
@@ -79,3 +104,11 @@ class PremiumCourse(models.Model):
             base_slug = slugify(self.name)
             self.slug = generate_unique_slug(base_slug, PremiumCourse)
         super().save(*args, **kwargs)
+
+class EnrolledCourse(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    course = models.ForeignKey(PremiumCourse, on_delete=models.CASCADE)
+    enrolled_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
