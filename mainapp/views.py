@@ -12,6 +12,7 @@ from .models import AlbumImage, Course, EnrolledCourse, Lecture, PremiumCourse, 
 from .r2 import get_master_manifest, get_sub_playlist_with_presigned_segments
 from django.db.models import Count, Sum
 from django.utils import timezone
+from datetime import timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -268,6 +269,10 @@ def jaap_increment(request, session_id):
     participant, _ = JaapSessionParticipant.objects.get_or_create(
         session=session, user=request.user
     )
+    now = timezone.now()
+    if participant.last_mala_at and (now - participant.last_mala_at) < timedelta(seconds=30):
+        return JsonResponse({'error': 'rate_limited'}, status=429)
     participant.mala_count += 1
+    participant.last_mala_at = now
     participant.save()
     return JsonResponse({'mala_count': participant.mala_count})

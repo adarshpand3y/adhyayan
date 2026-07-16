@@ -55,7 +55,6 @@
     <div class="text-center">
         <h4 class="mb-1">{{ session.name }}</h4>
         <div class="god-name mb-2">{{ session.god_name }}</div>
-        <p class="text-muted small mb-4">{{ participant_count }} participant{{ participant_count|pluralize }}</p>
 
         <div class="big-count mb-1" id="counter">0</div>
         <div class="text-muted mb-3" style="font-size: 0.9rem;">/ 108</div>
@@ -73,6 +72,7 @@
             Malas completed this session:
             <strong id="malaCount" style="color: #c9a000; font-size: 1.1rem;">{{ participant.mala_count|default:0 }}</strong>
         </div>
+        <div id="rateLimitMsg" class="text-danger small mt-2" style="display:none;">Mala not counted &mdash; please wait a moment before completing the next one.</div>
         <div class="text-muted small mt-2">Tap the button for each chant &mdash; a mala completes at 108.</div>
         <div class="text-muted small mt-1">You can also press <kbd>Space</kbd> on your keyboard.</div>
     </div>
@@ -100,9 +100,18 @@
                     method: 'POST',
                     headers: { 'X-CSRFToken': CSRF }
                 });
-                if (!r.ok) { localStorage.removeItem(STORAGE_KEY); window.location.href = '/jaap/' + SESSION_ID; return; }
-                const data = await r.json();
-                document.getElementById('malaCount').textContent = data.mala_count;
+                if (r.status === 429) {
+                    count = 108;
+                    localStorage.setItem(STORAGE_KEY, count);
+                    updateDisplay();
+                    const msg = document.getElementById('rateLimitMsg');
+                    msg.style.display = '';
+                    setTimeout(() => msg.style.display = 'none', 5000);
+                } else if (!r.ok) { localStorage.removeItem(STORAGE_KEY); window.location.href = '/jaap/' + SESSION_ID; return; }
+                else {
+                    const data = await r.json();
+                    document.getElementById('malaCount').textContent = data.mala_count;
+                }
             } catch {}
             sending = false;
             btn.disabled = false;
@@ -141,7 +150,7 @@
         document.addEventListener('keydown', e => {
             if (e.code === 'Space' && e.target === document.body) {
                 e.preventDefault();
-                handleTap();
+                if (!e.repeat) handleTap();
             }
         });
 

@@ -43,32 +43,40 @@
 
 <script type="text/babel" data-presets="react-classic">
     const generalServices = [
-        { id: 1, name: "Full kundli analysis", price: 30000 },
-        { id: 2, name: "Career/money consultation", price: 5000 },
-        { id: 3, name: "Marriage/relationship consultation", price: 5000 },
-        { id: 4, name: "Health consultation", price: 5000 },
-        { id: 5, name: "Education consultation", price: 5000 },
+        { id: 1, name: "Full kundli analysis", price: 50000 },
+        { id: 2, name: "Career/money consultation", price: 10000 },
+        { id: 3, name: "Marriage/relationship consultation", price: 10000 },
+        { id: 4, name: "Health consultation", price: 10000 },
+        { id: 5, name: "Education consultation", price: 10000 },
         { id: 6, name: "Business name consultation", price: 21000 },
         { id: 7, name: "Name correction", price: 7000 },
         { id: 8, name: "New name for baby or self", price: 21000 },
-        { id: 9, name: "Full numerology analysis", price: 21000 },
+        { id: 9, name: "Full numerology analysis", price: 50000 },
         { id: 10, name: "Mobile numerology", price: 5000 }
     ];
 
     const yantraServices = [
-        { id: 11, name: "Business", price: 5000 },
-        { id: 12, name: "Money", price: 2100 },
-        { id: 13, name: "Luck", price: 2100 },
-        { id: 14, name: "Love", price: 2100 },
-        { id: 15, name: "Happiness", price: 2100 },
-        { id: 16, name: "Fulfilment of desire", price: 5000 }
+        { id: 11, name: "Business", price: 10000 },
+        { id: 12, name: "Money", price: 5000 },
+        { id: 13, name: "Luck", price: 5000 },
+        { id: 14, name: "Love", price: 5000 },
+        { id: 15, name: "Happiness", price: 5000 },
+        { id: 16, name: "Fulfilment of desire", price: 10000 }
     ];
 
     const vastuServices = [
-        { id: 17, name: "Home (below 2100 sq. ft)", price: 30000 },
-        { id: 18, name: "Office (below 2100 sq. ft)", price: 30000 },
-        { id: 19, name: "Factory", price: "Enquire on WhatsApp" },
-        { id: 20, name: "Shop (per sq. ft)", price: 30 }
+        { id: 17, name: "Home Vastu by Acharaya Vishal Mishra (below 1000 sq. ft)*", price: 120000 },
+        { id: 18, name: "Home Vastu by Sarthis (below 1000 sq. ft)*", price: 50000 },
+        { id: 19, name: "Home Vastu (above 1000 sq. ft)*", price: 30 },
+        { id: 20, name: "Office Vastu by Acharaya Vishal Mishra (below 1000 sq. ft)*", price: 156000 },
+        { id: 21, name: "Office Vastu by Sarthis (below 1000 sq. ft)*", price: 75000 },
+        { id: 22, name: "Office Vastu (above 1000 sq. ft)*", price: 30 },
+        { id: 23, name: "Shop Vastu by Acharaya Vishal Mishra (below 1000 sq. ft)*", price: 156000 },
+        { id: 24, name: "Shop Vastu by Sarthis (below 1000 sq. ft)*", price: 75000 },
+        { id: 25, name: "Shop Vastu (above 1000 sq. ft)*", price: 30 },
+        { id: 26, name: "Factory Vastu by Acharaya Vishal Mishra (below 1000 sq. ft)*", price: 156000 },
+        { id: 27, name: "Factory Vastu by Sarthis (below 1000 sq. ft)*", price: 75000 },
+        { id: 28, name: "Factory Vastu (above 1000 sq. ft)*", price: 30 },
     ];
 
     const Cart = () => {
@@ -242,6 +250,7 @@
                         ))}
                     </tbody>
                 </table>
+                <p className="fs-5 mb-4">*Note: Travel, food and stay must be accomodated for Acharaya Vishal Mishra as well as Sarthis separately by the client in case of outstation vastu visits.</p>
 
                 {
                     cart.length > 0 ?

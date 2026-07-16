@@ -129,6 +129,7 @@ class JaapSessionParticipant(models.Model):
     session = models.ForeignKey(JaapSession, on_delete=models.CASCADE, related_name='participants')
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     mala_count = models.PositiveIntegerField(default=0)
+    last_mala_at = models.DateTimeField(null=True, blank=True)
     joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
