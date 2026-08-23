@@ -32,7 +32,7 @@
             {% if is_enrolled %}
             <a href="{% url 'study' courseslug=course.slug %}" class="btn btn-lg btn-success mb-4"><i class="fa-solid fa-play me-2"></i>Continue Learning</a>
             {% else %}
-            <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
+            <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="fw-bold format_with_comma me-1">{{course.price}}</span>{% if course.striked_price %}<span class="text-decoration-line-through">Rs. <span class="format_with_comma">{{course.striked_price}}</span></span>{% endif %}/-)</button>
             {% endif %}
             <div class="alert alert-dismissible alert-info">
                 <h4 class="fw-bold">Elligibility</h4>
@@ -61,7 +61,7 @@
             {% if is_enrolled %}
             <a href="{% url 'study' courseslug=course.slug %}" class="btn btn-lg btn-success mb-4"><i class="fa-solid fa-play me-2"></i>Continue Learning</a>
             {% else %}
-            <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="format_with_comma">{{course.price}}</span>/-)</button>
+            <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="fw-bold format_with_comma me-1">{{course.price}}</span>{% if course.striked_price %}<span class="text-decoration-line-through">Rs. <span class="format_with_comma">{{course.striked_price}}</span></span>{% endif %}/-)</button>
             {% endif %}
         </div>
         <div class="col-lg-4 col-md-12">
@@ -76,7 +76,7 @@
                             <li class="my-2"><span class="text-success me-2"><i class="fa-regular fa-clock"></i></span>{{course.duration}} duration</li>
                             <li class="my-2"><span class="text-success me-2"><i class="fa-solid fa-video"></i></span>{{course.mode}}</li>
                             <li class="my-2"><span class="text-success me-2"><i class="fa-solid fa-graduation-cap"></i></span>{{course.length}}</li>
-                            <li class="my-2"><span class="text-success ms-1 me-2"><i class="fa-solid fa-indian-rupee-sign"></i></span><span class="format_with_comma">{{course.price}}</span>/-</li>
+                            <li class="my-2"><span class="text-success ms-1 me-2"><i class="fa-solid fa-indian-rupee-sign"></i></span><span class="fw-bold format_with_comma me-1">{{course.price}}</span>{% if course.striked_price %}<span class="text-decoration-line-through format_with_comma">{{course.striked_price}}</span>{% endif %}</li>
                         </ul>
                         <div class="d-flex align-items-center justify-content-between">
                             {% if is_enrolled %}

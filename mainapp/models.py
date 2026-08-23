@@ -88,10 +88,11 @@ class PremiumCourse(models.Model):
     duration = models.CharField(max_length=50, default="3 months")
     mode = models.CharField(max_length=100, default="Live + Recorded")
     length = models.CharField(max_length=100, default="70+ lectures")
-    elligibility = models.TextField()
+    elligibility = models.TextField(null=True, blank=True)
     why_learn = models.TextField()
     key_highlights = models.TextField()
-    price = models.IntegerField()
+    price = models.IntegerField(help_text="Actual price shown to users.")
+    striked_price = models.IntegerField(null=True, blank=True, help_text="Original price shown struck-through above the current offer price. Leave blank to hide.")
     thumbnail = CloudinaryField('image')
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=False)
 

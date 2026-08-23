@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+
+{% block title %}Astro Lab{% endblock title %}
+{% block metadesc %}Test Panchang, Kundli and Vimshottari Dasha calculations{% endblock metadesc %}
+
+{% block body %}
+<div class="container py-4">
+  <h2 class="mb-4">Astro Lab <small class="text-muted fs-6">(internal test page)</small></h2>
+
+  <form method="post" class="row g-3 align-items-end mb-4">
+    {% csrf_token %}
+    <div class="col-6 col-md-2">
+      <label class="form-label">Date</label>
+      <input type="date" name="date" class="form-control" value="{{ form.date }}">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">Time</label>
+      <input type="time" name="time" class="form-control" value="{{ form.time }}" step="60">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">Latitude</label>
+      <input type="text" name="latitude" class="form-control" value="{{ form.latitude }}">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">Longitude</label>
+      <input type="text" name="longitude" class="form-control" value="{{ form.longitude }}">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">TZ offset (hrs)</label>
+      <input type="text" name="tz_offset" class="form-control" value="{{ form.tz_offset }}">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">As-of date</label>
+      <input type="date" name="as_of_date" class="form-control" value="{{ form.as_of_date }}">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label">As-of time</label>
+      <input type="time" name="as_of_time" class="form-control" value="{{ form.as_of_time }}" step="60">
+    </div>
+    <div class="col-6 col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Calculate</button>
+    </div>
+  </form>
+
+  {% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if panchang %}
+  <h4>Panchang &mdash; {{ panchang.date }} ({{ panchang.weekday }})</h4>
+  <p class="text-muted">Sunrise {{ panchang.sunrise|date:"H:i:s" }} &middot; Sunset {{ panchang.sunset|date:"H:i:s" }}</p>
+  <table class="table table-bordered table-sm w-auto mb-4">
+    <tr><th>Tithi</th><td>{{ panchang.tithi.paksha }} {{ panchang.tithi.name }} (ends {{ panchang.tithi.ends_at|date:"H:i:s" }})</td></tr>
+    <tr><th>Nakshatra</th><td>{{ panchang.nakshatra.name }}, pada {{ panchang.nakshatra.pada }} (ends {{ panchang.nakshatra.ends_at|date:"H:i:s" }})</td></tr>
+    <tr><th>Yoga</th><td>{{ panchang.yoga.name }} (ends {{ panchang.yoga.ends_at|date:"H:i:s" }})</td></tr>
+    <tr><th>Karana</th><td>{{ panchang.karana.name }} (ends {{ panchang.karana.ends_at|date:"H:i:s" }})</td></tr>
+  </table>
+
+  <h5>Choghadiya</h5>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <table class="table table-sm table-striped">
+        <thead><tr><th colspan="3">Day</th></tr></thead>
+        <tbody>
+        {% for c in panchang.choghadiya %}
+          {% if c.period == 'Day' %}
+          <tr class="{% if c.nature == 'Shubh' %}table-success{% elif c.nature == 'Ashubh' %}table-danger{% endif %}">
+            <td>{{ c.start|date:"H:i" }} - {{ c.end|date:"H:i" }}</td><td>{{ c.name }}</td><td>{{ c.nature }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <table class="table table-sm table-striped">
+        <thead><tr><th colspan="3">Night</th></tr></thead>
+        <tbody>
+        {% for c in panchang.choghadiya %}
+          {% if c.period == 'Night' %}
+          <tr class="{% if c.nature == 'Shubh' %}table-success{% elif c.nature == 'Ashubh' %}table-danger{% endif %}">
+            <td>{{ c.start|date:"H:i" }} - {{ c.end|date:"H:i" }}</td><td>{{ c.name }}</td><td>{{ c.nature }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if kundli %}
+  <h4>Birth Chart</h4>
+  <p>Ayanamsa (Lahiri): {{ kundli.ayanamsa|floatformat:4 }}&deg; &middot;
+     Ascendant: {{ kundli.ascendant.rashi }} {{ kundli.ascendant.degree_in_rashi|floatformat:2 }}&deg;
+     ({{ kundli.ascendant.nakshatra }} pada {{ kundli.ascendant.pada }})</p>
+
+  {% if north_indian_chart %}
+  <div class="mb-4" style="max-width: 480px;">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; background:#fffdf7; border:1px solid #999;">
+      {% for h in north_indian_chart %}
+        <polygon points="{{ h.points }}" fill="none" stroke="#555" stroke-width="1.5" />
+      {% endfor %}
+      {% for h in north_indian_chart %}
+        <text x="{{ h.cx }}" y="{{ h.cy }}" dy="-9" font-size="10" text-anchor="middle" fill="#999">{{ h.rashi_number }}{% if h.is_ascendant %} Asc {{ h.asc_degree }}&deg;{% endif %}</text>
+        <text x="{{ h.cx }}" y="{{ h.cy }}" dy="8" font-size="9" font-weight="600" text-anchor="middle">
+          {% for p in h.planets %}<tspan x="{{ h.cx }}" dy="{% if forloop.first %}0{% else %}10{% endif %}" fill="{{ p.color }}">{{ p.text }}</tspan>{% endfor %}
+        </text>
+      {% endfor %}
+    </svg>
+    <p class="text-muted small mb-0">North Indian style. Small gray number = rashi (1=Mesha...12=Meena) occupying that house; the top-center house shows the Ascendant's rashi and exact degree (whole-sign houses). Per planet, in brackets: R=retrograde, <span style="color:#198754">e=exalted</span>, <span style="color:#b45f06">c=combust</span>, <span style="color:#c0392b">d=debilitated</span>.</p>
+  </div>
+  {% endif %}
+
+  <table class="table table-bordered table-sm">
+    <thead>
+      <tr><th>Planet</th><th>Rashi</th><th>Degree</th><th>Nakshatra</th><th>Pada</th><th>House</th><th>Retrograde</th><th>Combust</th><th>Exalted/Debilitated</th></tr>
+    </thead>
+    <tbody>
+      <tr class="table-secondary">
+        <td>Ascendant</td>
+        <td>{{ kundli.ascendant.rashi }}</td>
+        <td>{{ kundli.ascendant.degree_in_rashi|floatformat:2 }}&deg;</td>
+        <td>{{ kundli.ascendant.nakshatra }}</td>
+        <td>{{ kundli.ascendant.pada }}</td>
+        <td>1</td>
+        <td>&ndash;</td>
+        <td>&ndash;</td>
+        <td>&ndash;</td>
+      </tr>
+    {% for p in kundli.planets %}
+      <tr class="{% if p.combust %}table-warning{% elif p.exalted %}table-success{% elif p.debilitated %}table-danger{% endif %}">
+        <td>{{ p.planet }}</td>
+        <td>{{ p.rashi }}</td>
+        <td>{{ p.degree_in_rashi|floatformat:2 }}&deg;</td>
+        <td>{{ p.nakshatra }}</td>
+        <td>{{ p.pada }}</td>
+        <td>{{ p.house }}</td>
+        <td>{% if p.retrograde %}R{% else %}&ndash;{% endif %}</td>
+        <td>{% if p.combust %}Combust ({{ p.sun_distance|floatformat:1 }}&deg; from Sun){% else %}&ndash;{% endif %}</td>
+        <td>{% if p.exalted %}Exalted{% elif p.debilitated %}Debilitated{% else %}&ndash;{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if dasha_levels %}
+  <h4>Dasha levels around {{ as_of_dt|date:"Y-m-d H:i" }}</h4>
+  <p class="text-muted">Each level shows all 9 sibling periods; the highlighted row is the one running at the as-of moment, and the next level drills into that row only.</p>
+  <div class="row mb-4">
+    {% for lvl in dasha_levels %}
+    <div class="col-md-4 col-lg mb-3">
+      <h6>{{ lvl.level }}</h6>
+      <table class="table table-bordered table-sm">
+        <thead><tr><th>Lord</th><th>Start</th><th>End</th></tr></thead>
+        <tbody>
+        {% for p in lvl.periods %}
+          <tr class="{% if forloop.counter0 == lvl.active_index %}table-primary{% endif %}">
+            <td>{{ p.lord }}</td>
+            <td>{{ p.start|date:"Y-m-d H:i" }}</td>
+            <td>{{ p.end|date:"Y-m-d H:i" }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if dashas %}
+  <h4>Vimshottari Dasha</h4>
+  <div class="accordion mb-4" id="dashaAccordion">
+    {% for d in dashas %}
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dasha{{ forloop.counter }}">
+          {{ d.lord }} Mahadasha &mdash; {{ d.start|date:"Y-m-d" }} to {{ d.end|date:"Y-m-d" }}
+          {% if d.partial %}<span class="badge bg-secondary ms-2">running at birth</span>{% endif %}
+        </button>
+      </h2>
+      <div id="dasha{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#dashaAccordion">
+        <div class="accordion-body">
+          <table class="table table-sm">
+            <thead><tr><th>Antardasha</th><th>Start</th><th>End</th></tr></thead>
+            <tbody>
+            {% for a in d.antardashas %}
+              <tr><td>{{ a.lord }}</td><td>{{ a.start|date:"Y-m-d" }}</td><td>{{ a.end|date:"Y-m-d" }}</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if shadbala %}
+  <h4>Shadbala <small class="text-muted fs-6">(virupas; 60 virupas = 1 rupa)</small></h4>
+  <div class="table-responsive mb-2">
+  <table class="table table-bordered table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Planet</th><th>Sthana</th><th>Dig</th><th>Kaala</th><th>Chesta</th>
+        <th>Naisargika</th><th>Drik</th><th>Yuddha</th><th>Total (virupa)</th><th>Total (rupa)</th><th>Required</th><th>Sufficient?</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for d in shadbala %}
+      <tr class="{% if d.sufficient %}table-success{% else %}table-warning{% endif %}">
+        <td>{{ d.planet }}</td>
+        <td>{{ d.sthana_bala.total|floatformat:2 }}</td>
+        <td>{{ d.dig_bala|floatformat:2 }}</td>
+        <td>{{ d.kaala_bala.total|floatformat:2 }}</td>
+        <td>{{ d.chesta_bala|floatformat:2 }}</td>
+        <td>{{ d.naisargika_bala|floatformat:2 }}</td>
+        <td>{{ d.drik_bala|floatformat:2 }}</td>
+        <td>{% if d.yuddha_bala %}{{ d.yuddha_bala|floatformat:2 }}{% else %}&ndash;{% endif %}</td>
+        <td>{{ d.total_virupa|floatformat:2 }}</td>
+        <td><strong>{{ d.total_rupa|floatformat:2 }}</strong></td>
+        <td>{{ d.required_rupa|floatformat:2 }}</td>
+        <td>{% if d.sufficient %}Yes{% else %}No{% endif %}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#sb-{{ d.planet }}">Details</button>
+        </td>
+      </tr>
+      <tr class="collapse" id="sb-{{ d.planet }}">
+        <td colspan="13">
+          <div class="row">
+            <div class="col-md-5">
+              <h6>Sthana Bala breakdown</h6>
+              <table class="table table-sm">
+                <tr><th>Uchcha (exaltation)</th><td>{{ d.sthana_bala.uchcha|floatformat:2 }}</td></tr>
+                <tr><th>Saptavargaja</th><td>{{ d.sthana_bala.saptavargaja|floatformat:2 }}</td></tr>
+                <tr><th>Ojha-Yugma (odd/even)</th><td>{{ d.sthana_bala.ojha_yugma|floatformat:2 }}</td></tr>
+                <tr><th>Kendradi (angular)</th><td>{{ d.sthana_bala.kendradi|floatformat:2 }}</td></tr>
+                <tr><th>Drekkana</th><td>{{ d.sthana_bala.drekkana|floatformat:2 }}</td></tr>
+              </table>
+              <h6>Saptavargaja detail</h6>
+              <table class="table table-sm">
+                <thead><tr><th>Varga</th><th>Dispositor</th><th>Relationship</th><th>Points</th></tr></thead>
+                <tbody>
+                {% for v in d.sthana_bala.saptavargaja_breakdown %}
+                  <tr><td>{{ v.varga }}</td><td>{{ v.dispositor }}</td><td>{{ v.relationship }}</td><td>{{ v.points|floatformat:2 }}</td></tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-5">
+              <h6>Kaala Bala breakdown</h6>
+              <table class="table table-sm">
+                <tr><th>Nathonnata (day/night)</th><td>{{ d.kaala_bala.nathonnata|floatformat:2 }}</td></tr>
+                <tr><th>Paksha (lunar fortnight)</th><td>{{ d.kaala_bala.paksha|floatformat:2 }}</td></tr>
+                <tr><th>Tribhaga</th><td>{{ d.kaala_bala.tribhaga|floatformat:2 }}</td></tr>
+                <tr><th>Varsha/Masa/Dina/Hora</th><td>{{ d.kaala_bala.varsha_masa_dina_hora|floatformat:2 }}</td></tr>
+                <tr><th>Ayana (declination)</th><td>{{ d.kaala_bala.ayana|floatformat:2 }}</td></tr>
+              </table>
+              <p class="text-muted small">
+                Varsha lord: {{ d.kaala_bala.lords.varsha }} &middot;
+                Masa lord: {{ d.kaala_bala.lords.masa }} &middot;
+                Dina lord: {{ d.kaala_bala.lords.dina }} &middot;
+                Hora lord: {{ d.kaala_bala.lords.hora }}
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="text-muted small">Rahu/Ketu are excluded (no classical shadbala). "Sufficient" compares total rupa against the commonly-cited BPHS minimum. Formulas were reconstructed and cross-checked against multiple secondary sources (no primary Sanskrit text was available in this environment) -- Yuddha Bala's winner rule (lower longitude) in particular is one convention among a few in use. Treat as a solid-effort reconstruction, not a substitute for reference software.</p>
+
+  <h4>Bhavabala <small class="text-muted fs-6">(Sripati bhava-madhya cusps)</small></h4>
+  <div class="table-responsive mb-4">
+  <table class="table table-bordered table-sm">
+    <thead>
+      <tr><th>House</th><th>Sign</th><th>Lord</th><th>Bhavadhipati</th><th>Bhava Dig</th><th>Bhava Drishti</th><th>Total (virupa)</th><th>Total (rupa)</th></tr>
+    </thead>
+    <tbody>
+    {% for h in bhavabala %}
+      <tr>
+        <td>{{ h.house }}</td>
+        <td>{{ h.sign }}</td>
+        <td>{{ h.lord }}</td>
+        <td>{{ h.bhavadhipati_bala|floatformat:2 }}</td>
+        <td>{{ h.bhava_dig_bala|floatformat:2 }}</td>
+        <td>{{ h.bhava_drishti_bala|floatformat:2 }}</td>
+        <td>{{ h.total_virupa|floatformat:2 }}</td>
+        <td><strong>{{ h.total_rupa|floatformat:2 }}</strong></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock body %}

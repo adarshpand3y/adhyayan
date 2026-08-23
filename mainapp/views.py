@@ -20,9 +20,40 @@ load_dotenv()
 _env = dotenv_values()
 
 # Create your views here.
+GOOGLE_REVIEW_URL = "https://www.google.com/searchviewer/10?svid=CAwSHRIbCgNwdnESFENnMHZaeTh4TVc0emJGOXVibXhxGAo#sv=CAESzQEKuQEStgEKd0FKaVQ0dElSeXItUDV6cUlMVzlmeVI5NF9Ram41T2NNVkx1cU1saUpfaUt5UkEzdkZXQU50eXpKN25GTGQzNTdLZm5XdUtGUG1WS3hGa1V5UlRzRk1oeUNDaXROTF9tbDJILVBXY0JHdFBsSzUzUHVkRW4zMlY4EhdZX0ZGYXB5d09zeXQ0LUVQMTRpRXFRURoiQURzcjlmUzQ5WWtWWGVoWkxxZlRXU2lJVWoxaUJNZVM5QRIEODA1MRoBMyoAMAA4AUAAGAAgisGByAhKAhAC"
+
+INSTAGRAM_TESTIMONIALS = [
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDQwMzI5ODc3NjYxMzY5?story_media_id=3299019660803747342&igsh=ajY2NWM0Mmw0OWJv",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODg2ODY4MDM1MDk1Mjc3?story_media_id=3450334216806482919&igsh=OG4xNG5pMnFjYm4z",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODQ3NzMwMDM1MzQ4ODc3?story_media_id=3506756818951570554&igsh=ajZ1cjdud216cGg4",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDMwNjc4ODU3MjIzNDcx?story_media_id=3535019316729254699&igsh=MTF1dTMyaHo4eXkzNA==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDU0MDExODEzMTIyNTAz?story_media_id=3560379339495946347&igsh=am82Z2pwb3F3czI1",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3OTAxNzQxODkxMTA3MzY1?story_media_id=3571225653443850164&igsh=MXF1dTk3anJlOWV0bQ==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDcwNjE5MjAwODgyMTc5?story_media_id=3586439422830918906&igsh=OHB6em00NGVqNWIx",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDMxOTI1NjU0NjQyMTE0?story_media_id=3610592441306479636&igsh=MWh6d2pwamp5NjlqdQ==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTA4NzM1MTMzNDkzNjMw?story_media_id=3626677792961954014&igsh=dDV2anB2bnNrYjBj",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODk4NDI2MjI4MjA2OTkw?story_media_id=3640888850299709164&igsh=MWszZWRvenpyZjEwYQ==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3ODQ3ODkxMTIzNTAyNzUw?story_media_id=3663317028020174787&igsh=eXUwd3BqNmZiMTJh",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDkzNzU5NjMxNzU4MDE4?story_media_id=3811043956164225879&igsh=MXU4enVoeGxoM2ZzdA==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3OTUxMDQ4OTg1MDg2MjIz?story_media_id=3830135438452042167&igsh=MTl2ajFkeXE2c2xyNQ==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTAwMTI1MzU2MzA1MDk2?story_media_id=3866452666122078664&igsh=cGR6anZ2aGl1NWZ4",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE3OTMyMDU5MDc1MDcyMzAw?story_media_id=3886176037269375365&igsh=MTNuZHhmZDRqYXk2dA==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MDY1MTYzOTM1NzAzNTMy?story_media_id=3911476898354631645&igsh=MTE5bWxrdGJrejBqdA==",
+    "https://www.instagram.com/s/aGlnaGxpZ2h0OjE4NTM1NTg3MTkzMDc4OTg4?story_media_id=3919437724197800460&igsh=OGNpNjJuZXQ0NzRh",
+]
+
+
 def index(request):
     images = AlbumImage.objects.all().order_by('-id')[:4]
-    return render(request, "index.html", {"images": images})
+    testimonials = [
+        {"label": f"Review {i}", "url": url}
+        for i, url in enumerate(INSTAGRAM_TESTIMONIALS, start=1)
+    ]
+    return render(request, "index.html", {
+        "images": images,
+        "testimonials": testimonials,
+        "google_review_url": GOOGLE_REVIEW_URL,
+    })
 
 def courses(request):
     courses = Course.objects.all()
@@ -276,3 +307,135 @@ def jaap_increment(request, session_id):
     participant.last_mala_at = now
     participant.save()
     return JsonResponse({'mala_count': participant.mala_count})
+
+# North Indian (diamond) chart layout: fixed house polygons for a 400x400 SVG.
+# House 1 (the Ascendant's house) is always the top-center kite; houses run
+# counter-clockwise from there. Centroids are used as text anchors.
+_NORTH_INDIAN_HOUSE_POLYGONS = [
+    {"house": 1, "points": "200,0 300,100 200,200 100,100", "cx": 200, "cy": 100},
+    {"house": 2, "points": "0,0 200,0 100,100", "cx": 100, "cy": 33},
+    {"house": 3, "points": "0,0 100,100 0,200", "cx": 33, "cy": 100},
+    {"house": 4, "points": "0,200 100,100 200,200 100,300", "cx": 100, "cy": 200},
+    {"house": 5, "points": "0,400 100,300 0,200", "cx": 33, "cy": 300},
+    {"house": 6, "points": "0,400 200,400 100,300", "cx": 100, "cy": 367},
+    {"house": 7, "points": "200,400 100,300 200,200 300,300", "cx": 200, "cy": 300},
+    {"house": 8, "points": "400,400 300,300 200,400", "cx": 300, "cy": 367},
+    {"house": 9, "points": "400,400 400,200 300,300", "cx": 367, "cy": 300},
+    {"house": 10, "points": "400,200 300,300 200,200 300,100", "cx": 300, "cy": 200},
+    {"house": 11, "points": "400,0 300,100 400,200", "cx": 367, "cy": 100},
+    {"house": 12, "points": "400,0 200,0 300,100", "cx": 300, "cy": 33},
+]
+
+_PLANET_ABBR = {
+    'Sun': 'Su', 'Moon': 'Mo', 'Mars': 'Ma', 'Mercury': 'Me', 'Jupiter': 'Ju',
+    'Venus': 'Ve', 'Saturn': 'Sa', 'Rahu': 'Ra', 'Ketu': 'Ke',
+}
+
+
+def _build_north_indian_chart(kundli):
+    """Builds the per-house display data (rashi number + one line per planet,
+    with degree/retrograde/combust/debilitated/exalted markers) for the fixed
+    diamond layout above, given a get_kundli() result."""
+    planets_by_house = {}
+    for p in kundli['planets']:
+        flags = []
+        if p['retrograde']:
+            flags.append('R')
+        if p.get('exalted'):
+            flags.append('e')
+        if p.get('combust'):
+            flags.append('c')
+        if p.get('debilitated'):
+            flags.append('d')
+        flag_str = f"({','.join(flags)})" if flags else ''
+        text = f"{_PLANET_ABBR[p['planet']]} {p['degree_in_rashi']:.0f}°{flag_str}"
+
+        if p.get('exalted'):
+            color = '#198754'  # exalted: green
+        elif p.get('debilitated'):
+            color = '#c0392b'  # debilitated: red
+        elif p.get('combust'):
+            color = '#b45f06'  # combust: amber
+        else:
+            color = '#1a1a1a'
+        planets_by_house.setdefault(p['house'], []).append({'text': text, 'color': color})
+
+    ascendant = kundli['ascendant']
+    asc_rashi_index = ascendant['rashi_index']
+    chart = []
+    for layout in _NORTH_INDIAN_HOUSE_POLYGONS:
+        house_num = layout['house']
+        rashi_index = (asc_rashi_index + house_num - 1) % 12
+        chart.append({
+            'points': layout['points'],
+            'cx': layout['cx'],
+            'cy': layout['cy'],
+            'rashi_number': rashi_index + 1,
+            'planets': planets_by_house.get(house_num, []),
+            'is_ascendant': house_num == 1,
+            'asc_degree': f"{ascendant['degree_in_rashi']:.2f}" if house_num == 1 else None,
+        })
+    return chart
+
+
+def astro_lab(request):
+    """Manual test page for the standalone vedic_astro engine (panchang + kundli + dasha)."""
+    import datetime
+    from vedic_astro import (
+        get_panchang, get_kundli, compute_vimshottari, dasha_breakdown,
+        compute_shadbala, compute_bhavabala,
+    )
+
+    now = timezone.localtime()
+    defaults = {
+        'date': timezone.localdate().isoformat(),
+        'time': '06:30',
+        'latitude': '28.6139',
+        'longitude': '77.2090',
+        'tz_offset': '5.5',
+        'as_of_date': now.date().isoformat(),
+        'as_of_time': now.strftime('%H:%M'),
+    }
+    context = {'form': defaults, 'error': None}
+
+    if request.method == 'POST':
+        form = {k: request.POST.get(k, defaults[k]) for k in defaults}
+        context['form'] = form
+        try:
+            date_val = datetime.date.fromisoformat(form['date'])
+            time_val = datetime.time.fromisoformat(form['time'])
+            lat = float(form['latitude'])
+            lon = float(form['longitude'])
+            tz_offset = float(form['tz_offset'])
+            birth_dt = datetime.datetime.combine(date_val, time_val)
+
+            as_of_date = datetime.date.fromisoformat(form['as_of_date'])
+            as_of_time = datetime.time.fromisoformat(form['as_of_time'])
+            as_of_dt = datetime.datetime.combine(as_of_date, as_of_time)
+
+            panchang = get_panchang(date_val, lat, lon, tz_offset)
+            kundli = get_kundli(birth_dt, lat, lon, tz_offset)
+            moon = next(p for p in kundli['planets'] if p['planet'] == 'Moon')
+            dashas = compute_vimshottari(moon['longitude'], birth_dt)
+            dasha_levels = dasha_breakdown(moon['longitude'], birth_dt, as_of_dt)
+            shadbala_raw = compute_shadbala(birth_dt, lat, lon, tz_offset)
+            bhavabala = compute_bhavabala(birth_dt, lat, lon, tz_offset, shadbala_raw)
+
+            shadbala = sorted(
+                ({'planet': planet, **data} for planet, data in shadbala_raw.items()),
+                key=lambda d: d['total_virupa'], reverse=True,
+            )
+            bhavabala = sorted(bhavabala, key=lambda h: h['total_virupa'], reverse=True)
+
+            context['panchang'] = panchang
+            context['kundli'] = kundli
+            context['north_indian_chart'] = _build_north_indian_chart(kundli)
+            context['dashas'] = dashas
+            context['dasha_levels'] = dasha_levels
+            context['as_of_dt'] = as_of_dt
+            context['shadbala'] = shadbala
+            context['bhavabala'] = bhavabala
+        except Exception as exc:
+            context['error'] = str(exc)
+
+    return render(request, 'astro_lab.html', context)

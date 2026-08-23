@@ -235,6 +235,117 @@
     </div>
 </div>
 
+<style>
+    .ig-scroll {
+        display: flex;
+        overflow-x: auto;
+        gap: 1.5rem;
+        padding: 0.5rem 0.5rem 1.5rem;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .ig-scroll::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .ig-scroll::-webkit-scrollbar-thumb {
+        background: #d0d7e2;
+        border-radius: 10px;
+    }
+
+    .ig-bubble {
+        flex: 0 0 auto;
+        width: 92px;
+        scroll-snap-align: start;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .ig-ring {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        padding: 3px;
+        margin: 0 auto;
+        background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+        transition: transform 0.15s ease-out;
+    }
+
+    .ig-bubble:hover .ig-ring {
+        transform: scale(1.07);
+    }
+
+    .ig-ring-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ig-label {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #495057;
+    }
+</style>
+
+<div class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <h2 class="text-center fw-bold narrow-text">What our students say &#128172;</h2>
+        <p class="text-center text-body-secondary">Real stories, straight from Instagram &mdash; tap a highlight to
+            watch</p>
+        <div class="ig-scroll mt-4">
+            {% for testimonial in testimonials %}
+            <a href="{{ testimonial.url }}" target="_blank" rel="noopener" class="ig-bubble">
+                <div class="ig-ring">
+                    <div class="ig-ring-inner">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#ea3170"
+                            class="bi bi-instagram" viewBox="0 0 16 16">
+                            <path
+                                d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334" />
+                        </svg>
+                    </div>
+                </div>
+                <span class="ig-label">{{ testimonial.label }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div style="background-color: #f8f9fa;">
+    <div class="container py-5 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 48 48" class="mb-2">
+            <path fill="#FFC107"
+                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+            <path fill="#FF3D00"
+                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+            <path fill="#4CAF50"
+                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+            <path fill="#1976D2"
+                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+        </svg>
+        <div class="mb-2">
+            {% for _ in "12345" %}
+            <i class="fa-solid fa-star text-warning"></i>
+            {% endfor %}
+        </div>
+        <h4 class="fw-bold">Loved by our community on Google</h4>
+        <p class="text-body-secondary mb-3">See what our students are saying about their journey with us.</p>
+        <a href="{{ google_review_url }}" target="_blank" rel="noopener"
+            class="btn btn-lg btn-primary hover-shadow hvr-shutter-out-horizontal">
+            Read &amp; Write a Review
+            <span>
+                <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+            </span></a>
+    </div>
+</div>
+
 <div style="background-color: rgb(233, 255, 233);">
     <div class="container py-5">
         <div class="row py-5">

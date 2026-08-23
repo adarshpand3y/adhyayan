@@ -6,6 +6,9 @@ __pycache__
 db.sqlite3
 media
 
+# Vedic astro ephemeris data (auto-downloaded by Skyfield on first run)
+vedic_astro/data/
+
 # Backup files # 
 *.bak 
 
