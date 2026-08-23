@@ -18,6 +18,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,9 +31,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(54q_l+2yu%i3ka63bv-4om9np&!y#itm9u26o5e^)7z1y-4ob'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'acharayavishalmishra.com', 'www.acharayavishalmishra.com']
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '127.0.0.1').split(',') if h.strip()]
+
+# Accounts whose login email is in this list only see courses marked is_demo=True.
+DEMO_ACCOUNT_EMAILS = [
+    'test@example.com',
+]
 
 
 # Application definition
@@ -136,8 +143,6 @@ STATICFILES_DIRS = [
 MEDIA_URL = 'media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-load_dotenv()
 
 cloudinary.config(
     cloud_name = os.environ.get("CLOUD_NAME"),

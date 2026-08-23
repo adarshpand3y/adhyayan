@@ -93,6 +93,7 @@ class PremiumCourse(models.Model):
     key_highlights = models.TextField()
     price = models.IntegerField(help_text="Actual price shown to users.")
     striked_price = models.IntegerField(null=True, blank=True, help_text="Original price shown struck-through above the current offer price. Leave blank to hide.")
+    is_demo = models.BooleanField(default=False, help_text="Demo courses are only shown to accounts whose email is in DEMO_ACCOUNT_EMAILS.")
     thumbnail = CloudinaryField('image')
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, editable=False)
 

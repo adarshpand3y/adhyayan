@@ -34,11 +34,13 @@
             {% else %}
             <button class="btn btn-lg btn-primary mb-4" onclick='enrollCourseOnWhatsapp("{{course.name}}")'>Enroll Now (Rs. <span class="fw-bold format_with_comma me-1">{{course.price}}</span>{% if course.striked_price %}<span class="text-decoration-line-through">Rs. <span class="format_with_comma">{{course.striked_price}}</span></span>{% endif %}/-)</button>
             {% endif %}
-            <div class="alert alert-dismissible alert-info">
-                <h4 class="fw-bold">Elligibility</h4>
-                <p>{{elligibility_array.0}}</p>
-                <a href="{{elligibility_array.2}}" class="btn btn-primary">{{elligibility_array.1}}</a>
-            </div>
+            {% if elligibility_array %}
+                <div class="alert alert-dismissible alert-info">
+                    <h4 class="fw-bold">Elligibility</h4>
+                    <p>{{elligibility_array.0}}</p>
+                    <a href="{{elligibility_array.2}}" class="btn btn-primary">{{elligibility_array.1}}</a>
+                </div>
+            {% endif %}
             
             
             <h4 class="fw-bold">Key highlights</h4>

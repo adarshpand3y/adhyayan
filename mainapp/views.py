@@ -14,6 +14,7 @@ from django.db.models import Count, Sum
 from django.utils import timezone
 from datetime import timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 
 
 load_dotenv()
@@ -58,6 +59,8 @@ def index(request):
 def courses(request):
     courses = Course.objects.all()
     premium_courses = PremiumCourse.objects.all()
+    if request.user.is_authenticated and request.user.email in settings.DEMO_ACCOUNT_EMAILS:
+        premium_courses = premium_courses.filter(is_demo=True)
 
     enrolled_ids = set()
     if request.user.is_authenticated:
