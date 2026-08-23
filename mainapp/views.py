@@ -58,9 +58,8 @@ def index(request):
 
 def courses(request):
     courses = Course.objects.all()
-    premium_courses = PremiumCourse.objects.all()
-    if request.user.is_authenticated and request.user.email in settings.DEMO_ACCOUNT_EMAILS:
-        premium_courses = premium_courses.filter(is_demo=True)
+    is_demo_user = request.user.is_authenticated and request.user.email in settings.DEMO_ACCOUNT_EMAILS
+    premium_courses = PremiumCourse.objects.all() if is_demo_user else PremiumCourse.objects.filter(is_demo=False)
 
     enrolled_ids = set()
     if request.user.is_authenticated:
