@@ -124,9 +124,15 @@ def album(request, page=1):
         }
     return render(request, "album.html", context)
 
+@login_required(login_url='/login')
 def premium_lecture(request, courseslug, lectureslug):
     course = get_object_or_404(PremiumCourse, slug=courseslug)
     lecture = get_object_or_404(PremiumLecture, slug=lectureslug, course=course)
+
+    if not EnrolledCourse.objects.filter(user=request.user, course=course).exists():
+        messages.error(request, 'You are not enrolled in this course.')
+        return redirect('my_courses')
+
     lectures = PremiumLecture.objects.filter(course=course)
     context = {
         'course': course,
@@ -140,6 +146,8 @@ def premium_lecture(request, courseslug, lectureslug):
 def premium_lecture_manifest(request, courseslug, lectureslug):
     course = get_object_or_404(PremiumCourse, slug=courseslug)
     lecture = get_object_or_404(PremiumLecture, slug=lectureslug, course=course)
+    if not request.user.is_authenticated or not EnrolledCourse.objects.filter(user=request.user, course=course).exists():
+        return HttpResponse(status=403)
     sub_playlist_base_url = f"/course/premium/{courseslug}/{lectureslug}/playlist"
     manifest = get_master_manifest(lecture.r2_key, sub_playlist_base_url)
     return HttpResponse(manifest, content_type='application/vnd.apple.mpegurl')
@@ -148,6 +156,8 @@ def premium_lecture_manifest(request, courseslug, lectureslug):
 def premium_lecture_sub_playlist(request, courseslug, lectureslug, subpath):
     course = get_object_or_404(PremiumCourse, slug=courseslug)
     lecture = get_object_or_404(PremiumLecture, slug=lectureslug, course=course)
+    if not request.user.is_authenticated or not EnrolledCourse.objects.filter(user=request.user, course=course).exists():
+        return HttpResponse(status=403)
     base_dir = lecture.r2_key.rsplit('/', 1)[0]
     playlist_key = f"{base_dir}/{subpath}"
     key_url = None
@@ -169,6 +179,8 @@ def hls_key(request, lecture_id):
     except Exception:
         return HttpResponse(status=403)
     lecture = get_object_or_404(PremiumLecture, id=lecture_id)
+    if not EnrolledCourse.objects.filter(user=request.user, course=lecture.course).exists():
+        return HttpResponse(status=403)
     if not lecture.aes_key:
         return HttpResponse(status=404)
     return HttpResponse(bytes.fromhex(lecture.aes_key), content_type='application/octet-stream')

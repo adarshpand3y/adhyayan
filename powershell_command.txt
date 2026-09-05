@@ -1,12 +1,19 @@
 ============== STEP 1: GENERATE KEY (run once per lecture) ==============
 
+$dir = (Get-Location).Path
+$keyPath = Join-Path $dir "enc.key"
+$keyInfoPath = Join-Path $dir "enc.keyinfo"
+
 $key = New-Object byte[] 16
 [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($key)
-[System.IO.File]::WriteAllBytes("enc.key", $key)
+[System.IO.File]::WriteAllBytes($keyPath, $key)
 $keyHex = ($key | ForEach-Object { $_.ToString("x2") }) -join ""
 Write-Host "AES Key (hex) - paste this into PremiumLecture.aes_key in Django admin:"
 Write-Host $keyHex
-"https://placeholder/key`nenc.key" | Set-Content enc.keyinfo
+[System.IO.File]::WriteAllText($keyInfoPath, "https://placeholder/key`nenc.key`n")
+
+Test-Path $keyPath
+Test-Path $keyInfoPath
 
 ============== STEP 2: CONVERT (original quality) ==============
 
@@ -24,7 +31,7 @@ Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -Item
   -var_stream_map "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p v:3,a:3,name:240p" `
   "output/%v/playlist.m3u8"
 
-============== LOW QUALITY ==============
+============== SLIGHTLY LOWER QUALITY ==============
 
 Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force output | Out-Null; .\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe -i "input.mp4" `
   -filter_complex "[0:v]split=4[v1][v2][v3][v4];[v1]scale=-2:1080[v1out];[v2]scale=-2:720[v2out];[v3]scale=-2:480[v3out];[v4]scale=-2:240[v4out]" `
@@ -40,7 +47,23 @@ Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -Item
   -var_stream_map "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p v:3,a:3,name:240p" `
   "output/%v/playlist.m3u8"
 
-============== EVEN LOWER QUALITY ==============
+============== MEDIUM QUALITY (BEST) ==============
+
+Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force output | Out-Null; .\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe -i "input.mp4" `
+  -filter_complex "[0:v]split=4[v1][v2][v3][v4];[v1]scale=-2:1080[v1out];[v2]scale=-2:720[v2out];[v3]scale=-2:480[v3out];[v4]scale=-2:240[v4out]" `
+  -map "[v1out]" -map 0:a -c:v:0 libx264 -crf:v:0 30 -maxrate:v:0 1550k -bufsize:v:0 3100k -c:a:0 aac -b:a:0 112k `
+  -map "[v2out]" -map 0:a -c:v:1 libx264 -crf:v:1 30 -maxrate:v:1 950k  -bufsize:v:1 1900k -c:a:1 aac -b:a:1 80k `
+  -map "[v3out]" -map 0:a -c:v:2 libx264 -crf:v:2 30 -maxrate:v:2 550k  -bufsize:v:2 1100k -c:a:2 aac -b:a:2 56k `
+  -map "[v4out]" -map 0:a -c:v:3 libx264 -crf:v:3 30 -maxrate:v:3 275k  -bufsize:v:3 550k  -c:a:3 aac -b:a:3 44k `
+  -preset slow -profile:v main `
+  -hls_key_info_file enc.keyinfo `
+  -f hls -hls_time 8 -hls_playlist_type vod `
+  -hls_segment_filename "output/%v/segment%03d.ts" `
+  -master_pl_name "index.m3u8" `
+  -var_stream_map "v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p v:3,a:3,name:240p" `
+  "output/%v/playlist.m3u8"
+
+============== LOWER QUALITY ==============
 
 Remove-Item -Recurse -Force output -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force output | Out-Null; .\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe -i "input.mp4" `
   -filter_complex "[0:v]split=4[v1][v2][v3][v4];[v1]scale=-2:1080[v1out];[v2]scale=-2:720[v2out];[v3]scale=-2:480[v3out];[v4]scale=-2:240[v4out]" `
