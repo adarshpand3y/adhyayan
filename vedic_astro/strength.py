@@ -4,52 +4,65 @@ Shadbala (six-fold planetary strength) and Bhavabala (house strength).
 Classical Vedic (Parashari) system, restricted to the 7 classical grahas --
 Rahu/Ketu have no shadbala in classical texts.
 
-This is a from-scratch reimplementation of several dozen classical
-sub-formulas (roughly BPHS chapters 26-29), cross-checked against multiple
-secondary sources (saravali.github.io, dirah.org, dineshcheramastro.com,
-barbarapijan.com's BPHS ch27 translation) since a primary BPHS text wasn't
-available in this environment. Formulas and their sourcing:
+Roughly BPHS chapters 26-29, in the form B.V. Raman sets out in "Graha and
+Bhava Balas", which is the reckoning AstroSage's Shadbala/Bhavabala tables
+follow. Calibrated against one such table (31 Oct 2001, 10:17 IST, Kolkata).
+Conventions worth recording, because sources disagree on several:
 
-  - Ayana Bala: ayana = 30*(eps + signed_kranti)/eps, eps = true obliquity,
-    signed_kranti = the planet's declination with a per-planet sign
-    convention (Sun/Mars/Jupiter/Venus: north+; Moon/Saturn: south+;
-    Mercury: |declination| always+). Sun's "doubling" (mentioned in several
-    sources) is *not* a x2 on this formula -- it refers to the fact that
-    the Sun's Chesta Bala is defined as a second copy of its Ayana Bala
-    (confirmed via vijayalur.com/tag/ayana-bala), which is what happens
-    naturally below since chesta_bala reuses the ayana_bala value.
-  - Chesta Bala: the classical "Chesta Kendra" is Graha-Seeghrochcha minus
-    the mean/true longitude average, which (for the 5 non-luminaries)
-    encodes the planet's phase relative to its Shighrochcha -- for the 3
-    superior planets that's effectively elongation from the Sun; for the 2
-    inferior planets it's the complementary phase. We compute Chesta Kendra
-    directly from that elongation (a verified modern equivalent -- retrograde
-    stations occur exactly at Chesta Kendra=180, matching every source),
-    rather than reproducing the classical multi-step Manda/Shighra mean-
-    longitude arithmetic (which needs classical epicycle parameter tables
-    not reproduced here). Reduction (>180 -> 360-x, then /3) per
-    saravali.github.io/astrology/bala_cheshta.html.
-  - Bhava Dig Bala: signs are grouped Nara/Jalachara/Chatushpada/Keeta
-    (Sagittarius and Capricorn split by degree); a bhava's Dig Bala is its
-    angular distance from the kendra where its own sign-group is weakest,
-    /3 -- reconstructed from the documented special cases (e.g. "Nara gives
-    the Ascendant 60, the 7th 0") per Medium/"Shadbala: 6 sources of
-    strength" and vedastrology.blogspot.com.
-  - Yuddha Bala (planetary war, previously omitted): only the 5 Tara Graha
-    (Mars/Mercury/Jupiter/Venus/Saturn) can war, triggered when two are
-    within 1 degree of longitude. Quantum = |difference in
-    Sthana+Dig+Kaala-up-to-Hora Bala| / |difference in classical angular
-    diameter|, added to the winner's total and subtracted from the loser's.
-    Per dineshcheramastro.com/2022/12/10/yuddha-bala, the winner is simply
-    the planet with the lower absolute longitude -- note this convention is
-    ambiguous right at the 0/360 wrap and other texts use a latitude-based
-    rule instead; flagged inline.
+  - Saptavargaja Bala: the Panchadha Maitri is evaluated in the direction "how
+    does the *occupying* graha regard its dispositor" -- BPHS's natural
+    friendships are asymmetric, so the direction changes the answer -- and the
+    tatkalika half is judged from the rasi chart, not the varga chart. Grades
+    are 45/30/22.5/15/7.5/3.75/1.875 (some sources give 45/30/20/15/10/4/2).
+  - Ojha-Yugma Bala: only the Moon and Venus want even signs; every other
+    graha, Mercury included, wants odd ones.
+  - Drekkana Bala: male planets (Sun/Mars/Jupiter) are strong in the 1st
+    drekkana, hermaphrodite (Mercury/Saturn) in the 2nd, female (Moon/Venus)
+    in the 3rd. Several overviews give this as male/female/hermaphrodite.
+  - Nathonnata Bala: driven by the Sun's local hour angle (a fixed 12-hour
+    half-day measured from local *apparent* noon/midnight), not by the true
+    sunrise/sunset arc.
+  - Tribhaga Bala: the lord of the current third of the day/night gets 60, and
+    Jupiter gets 60 unconditionally on top of that rota.
+  - Abda/Masa/Vara/Hora Bala: graded 15/30/45/60 virupas, not 15 each. Vara is
+    the weekday lord at sunrise; the year and month lords come off the Ahargana
+    rather than off the sankranti; the hora is counted in whole clock hours
+    from the local midnight the Ahargana day boundary sits on.
+  - Ayana Bala: (24 +/- kranti)/48 * 60, where the kranti is the declination of
+    the planet's *ecliptic point* (latitude ignored) taken at the same
+    classical 24-degree parama kranti, and the Sun's result is doubled.
+  - Chesta Bala: Chesta Kendra = Seeghrochcha - (madhyama + sphuta graha)/2,
+    with mean longitudes from modern mean orbital elements instead of the
+    classical epicycle tables. Sun -> Ayana Bala, Moon -> Paksha Bala.
+  - Drik Bala: Sphuta Drishti (a continuous piecewise-linear function of the
+    exact ecliptic distance) plus the special-aspect additions -- Mars +15 on
+    the 4th and 8th, Jupiter +30 on the 5th and 9th, Saturn +45 on the 3rd and
+    10th -- benefics minus malefics, quartered.
+  - Bhava Dig Bala: distance from the weak kendra counted in whole *houses*.
+  - Bhava Drishti Bala: the same drishti on the Bhava Madhya, quartered per
+    graha -- except Jupiter's and Mercury's, which count in full.
+  - Yuddha Bala: implemented per Raman (only the 5 Tara Graha, within
+    YUDDHA_ORB_DEGREES; quantum = |difference in Sthana+Dig+Kaala-up-to-Hora| /
+    |difference in disc diameter|; winner is the lower longitude) but OFF by
+    default, since the reference tables report no Yuddha Bala even for a pair
+    3 arc-minutes apart. Pass apply_yuddha_bala=True to enable it.
 
-Naisargika Bala, Uchcha Bala, Kendradi Bala, Drishti grading and Panchadha
-Maitri were already standard and unchanged. Cross-check against reference
-software (Jagannatha Hora / Parashara's Light) before relying on this for
-anything beyond prototyping -- these are still a solo reconstruction without
-access to a primary Sanskrit source.
+Known differences against that reference table, both deliberate:
+  - Its Sun Chesta Bala repeats its Sun Drik Bala to the last decimal, which
+    looks like a bug on its side; the Sun keeps the documented rule here
+    (Sun Chesta = Ayana Bala, Moon Chesta = Paksha Bala).
+  - Saptavargaja matches it exactly for 5 of the 7 grahas; Mercury and Saturn
+    come out 15 and 11.25 virupas higher. Nothing accounts for it: not the
+    friendship direction, not any of the 15625 compound-table variants, not
+    any of the 4096 tatkalika house-sets, not judging friendship from the
+    varga chart, and not any of 216 combinations of alternative Hora /
+    Drekkana / Saptamsa / Navamsa / Dwadasamsa / Trimsamsa division rules --
+    the rules used here are the best available at 5 of 7, and every variant
+    that fixes those two breaks others.
+
+Residuals against that table elsewhere are sub-virupa: Ayana within 0.31 and
+Chesta within 0.7, both from slightly different underlying positions and from
+using modern mean elements in place of Surya-Siddhanta mean motions.
 """
 import math
 from datetime import timedelta
@@ -58,9 +71,12 @@ from . import ephem, varga
 from .constants import (
     CLASSICAL_GRAHAS, RASHIS, RASHI_LORDS, MOOLATRIKONA, EXALTATION_LONGITUDE,
     NATURAL_FRIENDS, NATURAL_ENEMIES, RELATIONSHIP_POINTS, GENDER,
-    DIG_BALA_FULL_HOUSE, WEEKDAY_LORDS, CHALDEAN_ORDER,
+    DIG_BALA_FULL_HOUSE, CHALDEAN_ORDER, VARA_LORDS_FROM_SUNDAY,
     TRIBHAGA_DAY_LORDS, TRIBHAGA_NIGHT_LORDS, NAISARGIKA_RANK, REQUIRED_BALA_RUPAS,
-    NATURAL_BENEFICS, DRISHTI_BASE_PERCENT, SPECIAL_ASPECT_HOUSES, WEEKDAYS,
+    NATURAL_BENEFICS, SPHUTA_DRISHTI_SEGMENTS,
+    ABDA_MASA_VARA_HORA_VIRUPAS, COMPONENT_MINIMUM_VIRUPAS,
+    SPECIAL_ASPECT_BONUS, FULL_BHAVA_DRISHTI_GRAHAS,
+    KALI_EPOCH_JD, AHARGANA_YEAR_DAYS, AHARGANA_MONTH_DAYS, AYANA_PARAMA_KRANTI,
     BHAVA_SIGN_GROUP_WEAK_HOUSE, YUDDHA_ELIGIBLE_PLANETS, YUDDHA_ORB_DEGREES,
     YUDDHA_DIAMETER_ARCSEC,
 )
@@ -105,9 +121,13 @@ _COMPOUND_TABLE = {
 }
 
 
-def _compound_relationship(dispositor: str, occupant: str, sign_indices: dict) -> str:
-    natural = _natural_relationship(dispositor, occupant)
-    temporal = _temporal_relationship(sign_indices[dispositor], sign_indices[occupant])
+def _compound_relationship(graha: str, other: str, sign_indices: dict) -> str:
+    """How `graha` regards `other`. The direction matters: BPHS's natural
+    friendships are asymmetric (Mars counts the Moon a friend, the Moon counts
+    Mars only neutral), so Saptavargaja Bala has to ask how the *occupying*
+    planet regards its dispositor, not the other way round."""
+    natural = _natural_relationship(graha, other)
+    temporal = _temporal_relationship(sign_indices[graha], sign_indices[other])
     return _COMPOUND_TABLE[(natural, temporal)]
 
 
@@ -134,7 +154,7 @@ def _saptavargaja_bala(planet: str, longitude: float, sign_indices: dict):
             else:
                 rel, pts = "own", RELATIONSHIP_POINTS["own"]
         else:
-            rel = _compound_relationship(dispositor, planet, sign_indices)
+            rel = _compound_relationship(planet, dispositor, sign_indices)
             pts = RELATIONSHIP_POINTS[rel]
         total += pts
         breakdown.append({"varga": _VARGA_NAMES[i], "dispositor": dispositor, "relationship": rel, "points": pts})
@@ -142,8 +162,9 @@ def _saptavargaja_bala(planet: str, longitude: float, sign_indices: dict):
 
 
 def _ojha_yugma_bala(planet: str, d1_sign_index: int, d9_sign_index: int) -> float:
-    if planet == "Mercury":
-        return 30.0  # classically always full
+    """15 virupas each for the Rashi and the Navamsa being of the planet's
+    preferred parity. Only the Moon and Venus want even (yugma) signs; every
+    other graha -- Mercury included -- wants odd (ojha) ones."""
     prefers_even = planet in ("Moon", "Venus")
     total = 0.0
     for sign_idx in (d1_sign_index, d9_sign_index):
@@ -161,8 +182,15 @@ def _kendradi_bala(house: int) -> float:
     return 15.0
 
 
+# Gender of the 1st/2nd/3rd drekkana of a sign. Male planets (Sun/Mars/Jupiter)
+# are strong in the first, hermaphrodite ones (Mercury/Saturn) in the second,
+# female ones (Moon/Venus) in the third. Some overviews give this order as
+# male/female/hermaphrodite; Raman's ordering is the one used here.
+_DREKKANA_GENDER = ["male", "neuter", "female"]
+
+
 def _drekkana_bala(planet: str, degree_in_sign: float) -> float:
-    decan_gender = ["male", "female", "neuter"][int(degree_in_sign // 10)]
+    decan_gender = _DREKKANA_GENDER[int(degree_in_sign // 10)]
     return 15.0 if GENDER[planet] == decan_gender else 0.0
 
 
@@ -188,28 +216,21 @@ def _day_night_bracket(dt_utc, latitude: float, longitude: float) -> dict:
     if dt_utc < sunrise0:
         sunrise_prev, sunset_prev = ephem.sunrise_sunset(day0_noon - timedelta(days=1), latitude, longitude)
         return {"is_day": False, "sunrise": sunrise_prev, "sunset": sunset_prev, "next_sunrise": sunrise0}
-    if dt_utc < sunset0:
-        return {"is_day": True, "sunrise": sunrise0, "sunset": sunset0}
     sunrise_next, _ = ephem.sunrise_sunset(day0_noon + timedelta(days=1), latitude, longitude)
-    return {"is_day": False, "sunrise": sunrise0, "sunset": sunset0, "next_sunrise": sunrise_next}
+    return {"is_day": dt_utc < sunset0, "sunrise": sunrise0, "sunset": sunset0, "next_sunrise": sunrise_next}
 
 
-def _nathonnata_bala(planet: str, dt_utc, bracket: dict) -> float:
+def _nathonnata_bala(planet: str, sun_hour_angle: float) -> float:
+    """Diva/Ratri Bala from the classical "nata" -- the elapsed time from local
+    apparent noon (or midnight), each half-day being a fixed 12 hours. That is
+    exactly the Sun's local hour angle, so this is measured off the hour angle
+    rather than off the true sunrise/sunset arc: at local apparent noon the
+    diurnal planets get the full 60, at local apparent midnight the nocturnal
+    ones do, and the pair always sums to 60."""
     if planet == "Mercury":
-        return 60.0
-    if bracket["is_day"]:
-        noon = bracket["sunrise"] + (bracket["sunset"] - bracket["sunrise"]) / 2
-        half_len = (bracket["sunset"] - bracket["sunrise"]) / 2
-        frac = abs((dt_utc - noon).total_seconds()) / half_len.total_seconds()
-        diurnal = 60.0 * (1.0 - frac)
-        nocturnal = 60.0 - diurnal
-    else:
-        midnight = bracket["sunset"] + (bracket["next_sunrise"] - bracket["sunset"]) / 2
-        half_len = (bracket["next_sunrise"] - bracket["sunset"]) / 2
-        frac = abs((dt_utc - midnight).total_seconds()) / half_len.total_seconds()
-        nocturnal = 60.0 * (1.0 - frac)
-        diurnal = 60.0 - nocturnal
-    return diurnal if planet in ("Sun", "Jupiter", "Venus") else nocturnal
+        return 60.0  # Mercury is strong by day and by night alike
+    diurnal = 60.0 * (180.0 - abs(sun_hour_angle)) / 180.0
+    return diurnal if planet in ("Sun", "Jupiter", "Venus") else 60.0 - diurnal
 
 
 def _paksha_bala(planet: str, elongation: float) -> float:
@@ -220,6 +241,10 @@ def _paksha_bala(planet: str, elongation: float) -> float:
 
 
 def _tribhaga_bala(planet: str, dt_utc, bracket: dict) -> float:
+    """The lord of the current third of the day (or of the night) gets 60 --
+    and Jupiter gets 60 unconditionally, on top of that rota."""
+    if planet == "Jupiter":
+        return 60.0
     if bracket["is_day"]:
         third = (bracket["sunset"] - bracket["sunrise"]) / 3
         idx = min(2, int((dt_utc - bracket["sunrise"]) / third))
@@ -231,108 +256,110 @@ def _tribhaga_bala(planet: str, dt_utc, bracket: dict) -> float:
     return 60.0 if planet == lord else 0.0
 
 
-def _hora_lord(dt_utc, bracket: dict, dina_lord: str) -> str:
-    start_idx = CHALDEAN_ORDER.index(dina_lord)
-    if bracket["is_day"]:
-        day_len = bracket["sunset"] - bracket["sunrise"]
-        overall = min(11, int((dt_utc - bracket["sunrise"]) / (day_len / 12)))
-    else:
-        night_len = bracket["next_sunrise"] - bracket["sunset"]
-        overall = 12 + min(11, int((dt_utc - bracket["sunset"]) / (night_len / 12)))
-    return CHALDEAN_ORDER[(start_idx + overall) % 7]
+def _hora_lord(birth_dt_local, dina_lord: str) -> str:
+    """Lord of the planetary hour. The horas run in descending Chaldean order
+    from the lord of the vara, counted as whole clock hours from local midnight
+    -- the same midnight the Ahargana day boundary sits on, which keeps this
+    consistent with the Abda/Masa rules below."""
+    elapsed_hours = int(birth_dt_local.hour + birth_dt_local.minute / 60.0
+                        + birth_dt_local.second / 3600.0)
+    return CHALDEAN_ORDER[(CHALDEAN_ORDER.index(dina_lord) + elapsed_hours) % 7]
 
 
-def _last_crossing_before(value_fn, window_days: float, target_dt_utc, step_degrees: float, step_hours: float):
-    """Most recent time before target_dt_utc at which value_fn (a 0-360 angle)
-    crosses a multiple of step_degrees, found by scanning forward from
-    (target_dt_utc - window_days) and bisecting each crossing found."""
-    step = timedelta(hours=step_hours)
-    t = target_dt_utc - timedelta(days=window_days)
-    v_prev = value_fn(t) % 360.0
-    last_cross = None
+def _abda_masa_vara_hora_lords(birth_dt_local, dt_utc, tz_offset: float, bracket: dict) -> dict:
+    """Lords of the year (Abda/Varsha), month (Masa), weekday (Vara/Dina) and
+    planetary hour (Hora), worth 15/30/45/60 virupas respectively.
 
-    while t < target_dt_utc:
-        t_next = min(t + step, target_dt_utc)
-        v_next = value_fn(t_next) % 360.0
-        v_next_unwrapped = v_next + 360.0 if v_next < v_prev else v_next
-
-        k = math.floor(v_prev / step_degrees) + 1
-        while k * step_degrees <= v_next_unwrapped:
-            boundary = k * step_degrees
-            lo_t, lo_v = t, v_prev
-            hi_t, hi_v = t_next, v_next_unwrapped
-            for _ in range(40):
-                mid_t = lo_t + (hi_t - lo_t) / 2
-                mid_v = value_fn(mid_t) % 360.0
-                if mid_v < lo_v - 1e-9:
-                    mid_v += 360.0
-                if mid_v < boundary:
-                    lo_t, lo_v = mid_t, mid_v
-                else:
-                    hi_t, hi_v = mid_t, mid_v
-            last_cross = lo_t + (hi_t - lo_t) / 2
-            k += 1
-
-        t, v_prev = t_next, v_next
-
-    return last_cross
-
-
-def _sun_sidereal_longitude(dt_utc) -> float:
-    return ephem.sidereal_longitude("Sun", dt_utc)
-
-
-def _varsha_masa_dina_hora_bala(dt_utc, tz_offset: float, bracket: dict):
+    Vara is the weekday lord of the sunrise that opens the Hindu day. The year
+    and month lords come off the Ahargana rather than off the sankranti: the
+    schematic year is 360 days and its month 30, so stepping the birth weekday
+    back by (ahargana mod 360) resp. (ahargana mod 30) days lands on the day
+    that opens the current year resp. month. The extra -1 day is an Ahargana
+    epoch convention (where day zero sits relative to sunrise); it is applied
+    to both rules alike and is what reproduces the reference tables.
+    """
     sunrise_local = bracket["sunrise"] + timedelta(hours=tz_offset)
-    dina_lord = WEEKDAY_LORDS[WEEKDAYS[sunrise_local.weekday()]]
-    hora_lord = _hora_lord(dt_utc, bracket, dina_lord)
+    dina_index = (sunrise_local.weekday() + 1) % 7  # Python Mon=0 -> Sunday=0
+    dina_lord = VARA_LORDS_FROM_SUNDAY[dina_index]
 
-    masa_crossing = _last_crossing_before(_sun_sidereal_longitude, 40, dt_utc, 30.0, 12)
-    masa_lord = WEEKDAY_LORDS[WEEKDAYS[(masa_crossing + timedelta(hours=tz_offset)).weekday()]]
+    ahargana = math.floor(ephem.julian_day(dt_utc) - KALI_EPOCH_JD)
+    varsha_index = (dina_index - (ahargana % AHARGANA_YEAR_DAYS) - 1) % 7
+    masa_index = (dina_index - (ahargana % AHARGANA_MONTH_DAYS) - 1) % 7
 
-    varsha_crossing = _last_crossing_before(_sun_sidereal_longitude, 370, dt_utc, 360.0, 48)
-    varsha_lord = WEEKDAY_LORDS[WEEKDAYS[(varsha_crossing + timedelta(hours=tz_offset)).weekday()]]
-
-    lords = {"dina": dina_lord, "hora": hora_lord, "masa": masa_lord, "varsha": varsha_lord}
-    return lords
+    return {
+        "varsha": VARA_LORDS_FROM_SUNDAY[varsha_index],
+        "masa": VARA_LORDS_FROM_SUNDAY[masa_index],
+        "dina": dina_lord,
+        "hora": _hora_lord(birth_dt_local, dina_lord),
+    }
 
 
 def _ayana_bala(planet: str, dt_utc) -> float:
-    """ayana = 30*(eps + signed_kranti)/eps, per-planet sign convention (see
-    module docstring). Clamped to [0,60]: planets with orbital latitude
-    (chiefly the Moon) can reach declinations slightly beyond the obliquity,
-    which would otherwise push the raw formula a little past the usual
-    0-60 virupa range."""
-    eps = ephem.obliquity_of_ecliptic(dt_utc)
-    dec = ephem.declination(planet, dt_utc)
+    """(24 +/- kranti) / 48 * 60, i.e. 30 * (K + signed_kranti) / K with K the
+    parama kranti, and the per-planet sign convention (Sun/Mars/Jupiter/Venus:
+    north declination adds; Moon/Saturn: south adds; Mercury: the magnitude
+    always adds).
+
+    Kranti is the declination of the planet's *ecliptic point* -- derived from
+    the sayana longitude with latitude ignored -- not the planet's apparent
+    declination. That distinction is worth ~4 degrees for the Moon and shows up
+    directly in the result. Because |kranti| <= K by construction the raw value
+    stays inside 0-60 with no clamping.
+
+    The Sun's Ayana Bala is then doubled.
+    """
+    eps = AYANA_PARAMA_KRANTI
+    kranti = ephem.declination_of_ecliptic_point(
+        ephem.tropical_longitude(planet, dt_utc), dt_utc, obliquity=eps)
     if planet == "Mercury":
-        signed_kranti = abs(dec)  # always adds, regardless of N/S
+        signed_kranti = abs(kranti)
     elif planet in ("Saturn", "Moon"):
-        signed_kranti = -dec  # south declination adds, north subtracts
+        signed_kranti = -kranti
     else:  # Sun, Mars, Jupiter, Venus
-        signed_kranti = dec  # north declination adds, south subtracts
-    raw = 30.0 * (eps + signed_kranti) / eps
-    return max(0.0, min(60.0, raw))
+        signed_kranti = kranti
+    bala = 30.0 * (eps + signed_kranti) / eps
+    return bala * 2.0 if planet == "Sun" else bala
 
 
 # --------------------------------------------------------------------------
 # Chesta Bala (motional strength)
 # --------------------------------------------------------------------------
 
+_SUPERIOR_GRAHAS = ("Mars", "Jupiter", "Saturn")
+
+
+def _midpoint(a: float, b: float) -> float:
+    """Circular midpoint of two longitudes, taking the short way round."""
+    return (a + ((b - a + 180.0) % 360.0 - 180.0) / 2.0) % 360.0
+
+
 def _chesta_bala(planet: str, ayana_bala_value: float, paksha_bala_value: float,
-                  sun_longitude: float, planet_longitude: float) -> float:
+                 sun_longitude: float, planet_longitude: float, dt_utc) -> float:
+    """Chesta Kendra = Seeghrochcha - (madhyama graha + sphuta graha) / 2,
+    reduced to 0-180 and divided by 3.
+
+    The Seeghrochcha is the Sun for the three superior planets and the planet's
+    own mean heliocentric longitude for the two inferior ones -- and the
+    "madhyama graha" (mean planet) swaps the same way round, being the mean
+    heliocentric longitude for a superior planet and the Sun for an inferior
+    one. Mean longitudes come from modern mean orbital elements rather than the
+    classical epicycle tables, which leaves a residual of well under a virupa
+    against tables built on Surya-Siddhanta mean motions.
+    """
     if planet == "Sun":
-        return ayana_bala_value  # classical substitution (see module docstring)
+        return ayana_bala_value  # BPHS: the Sun's Chesta Bala is its Ayana Bala
     if planet == "Moon":
-        return paksha_bala_value  # classical substitution
-    elongation = (planet_longitude - sun_longitude) % 360.0
-    if planet in ("Mars", "Jupiter", "Saturn"):
-        # Superior planets retrograde at opposition (elongation=180).
-        kendra = elongation
+        return paksha_bala_value  # BPHS: the Moon's Chesta Bala is its Paksha Bala
+
+    ayanamsa = ephem.lahiri_ayanamsa(dt_utc)
+    mean_graha = (ephem.mean_heliocentric_longitude(planet, dt_utc) - ayanamsa) % 360.0
+
+    if planet in _SUPERIOR_GRAHAS:
+        kendra = sun_longitude - _midpoint(mean_graha, planet_longitude)
     else:
-        # Mercury/Venus retrograde at inferior conjunction (elongation=0),
-        # the opposite phase to the superior planets.
-        kendra = (180.0 - elongation) % 360.0
+        kendra = mean_graha - _midpoint(sun_longitude, planet_longitude)
+
+    kendra %= 360.0
     reduced = kendra if kendra <= 180.0 else 360.0 - kendra
     return reduced / 3.0  # max 60 at the retrograde-station phase
 
@@ -341,36 +368,51 @@ def _chesta_bala(planet: str, ayana_bala_value: float, paksha_bala_value: float,
 # Drik Bala (aspectual strength)
 # --------------------------------------------------------------------------
 
-def _aspect_virupa(aspecting_planet: str, house_distance: int) -> float:
-    pct = DRISHTI_BASE_PERCENT.get(house_distance, 0.0)
-    pct = SPECIAL_ASPECT_HOUSES.get(aspecting_planet, {}).get(house_distance, pct)
-    return 60.0 * pct / 100.0
+def _sphuta_drishti(aspecting_planet: str, distance: float) -> float:
+    """Sphuta Drishti in virupas, a continuous piecewise-linear function of the
+    ecliptic distance measured *from* the aspecting graha *to* the aspected
+    point. It reproduces the classical graded aspects at the house boundaries
+    (15 on the 3rd, 45 on the 4th, 30 on the 5th, 60 on the 7th, 45 on the 8th,
+    30 on the 9th, 15 on the 10th) but varies smoothly in between, which is why
+    Drik Bala comes out in fractions of a virupa rather than multiples of 15.
+    Mars, Jupiter and Saturn then add their special-aspect bonus on top."""
+    distance %= 360.0
+    value = 0.0
+    for upper, slope, intercept in SPHUTA_DRISHTI_SEGMENTS:
+        if distance < upper:
+            value = slope * distance + intercept
+            break
+    for (lower, upper), bonus in SPECIAL_ASPECT_BONUS.get(aspecting_planet, ()):
+        if lower <= distance < upper:
+            value += bonus
+    return value
 
 
 def _is_benefic_aspect(aspecting_planet: str, planet_longitude: dict) -> bool:
     if aspecting_planet == "Moon":
+        # Waxing Moon is a benefic, waning Moon a malefic.
         return ((planet_longitude["Moon"] - planet_longitude["Sun"]) % 360.0) < 180.0
     return aspecting_planet in NATURAL_BENEFICS
 
 
-def _drik_bala(planet: str, planet_longitude: dict, sign_indices: dict) -> float:
-    total = 0.0
-    for other in CLASSICAL_GRAHAS:
-        if other == planet:
-            continue
-        distance = _house_distance(sign_indices[other], sign_indices[planet])
-        virupa = _aspect_virupa(other, distance)
-        if virupa == 0.0:
-            continue
-        total += virupa if _is_benefic_aspect(other, planet_longitude) else -virupa
-    return total
+def _signed_drishti(aspecting_planet: str, target_longitude: float, planet_longitude: dict) -> float:
+    """One graha's Sphuta Drishti on a point, positive if it is a benefic."""
+    virupa = _sphuta_drishti(aspecting_planet, target_longitude - planet_longitude[aspecting_planet])
+    return virupa if _is_benefic_aspect(aspecting_planet, planet_longitude) else -virupa
+
+
+def _drik_bala(planet: str, planet_longitude: dict) -> float:
+    """A graha's Drik Bala is the net drishti falling on it, quartered."""
+    return sum(_signed_drishti(other, planet_longitude[planet], planet_longitude)
+               for other in CLASSICAL_GRAHAS if other != planet) / 4.0
 
 
 # --------------------------------------------------------------------------
 # Public API
 # --------------------------------------------------------------------------
 
-def compute_shadbala(birth_dt_local, latitude: float, longitude: float, tz_offset: float) -> dict:
+def compute_shadbala(birth_dt_local, latitude: float, longitude: float, tz_offset: float,
+                     apply_yuddha_bala: bool = False) -> dict:
     from .chart import get_kundli
 
     kundli = get_kundli(birth_dt_local, latitude, longitude, tz_offset)
@@ -387,7 +429,8 @@ def compute_shadbala(birth_dt_local, latitude: float, longitude: float, tz_offse
     mc_lon = ephem.sidereal_mc(dt_utc, longitude)
     angle_by_house = {1: asc_lon, 4: (mc_lon + 180.0) % 360.0, 7: (asc_lon + 180.0) % 360.0, 10: mc_lon}
 
-    vmdh_lords = _varsha_masa_dina_hora_bala(dt_utc, tz_offset, bracket)
+    sun_hour_angle = ephem.sun_hour_angle(dt_utc, longitude)
+    vmdh_lords = _abda_masa_vara_hora_lords(birth_dt_local, dt_utc, tz_offset, bracket)
 
     results = {}
     for planet in CLASSICAL_GRAHAS:
@@ -404,16 +447,17 @@ def compute_shadbala(birth_dt_local, latitude: float, longitude: float, tz_offse
 
         dig = _dig_bala(planet, lon, angle_by_house)
 
-        nathonnata = _nathonnata_bala(planet, dt_utc, bracket)
+        nathonnata = _nathonnata_bala(planet, sun_hour_angle)
         paksha = _paksha_bala(planet, elongation)
-        tribhaga = 0.0 if planet == "Jupiter" else _tribhaga_bala(planet, dt_utc, bracket)
-        vmdh_bala = sum(15.0 for lord in vmdh_lords.values() if lord == planet)
+        tribhaga = _tribhaga_bala(planet, dt_utc, bracket)
+        vmdh_bala = sum(virupas for period, virupas in ABDA_MASA_VARA_HORA_VIRUPAS.items()
+                        if vmdh_lords[period] == planet)
         ayana = _ayana_bala(planet, dt_utc)
         kaala_total = nathonnata + paksha + tribhaga + vmdh_bala + ayana
 
-        chesta = _chesta_bala(planet, ayana, paksha, planet_longitude["Sun"], lon)
+        chesta = _chesta_bala(planet, ayana, paksha, planet_longitude["Sun"], lon, dt_utc)
         naisargika = 60.0 * NAISARGIKA_RANK[planet] / 7.0
-        drik = _drik_bala(planet, planet_longitude, sign_indices)
+        drik = _drik_bala(planet, planet_longitude)
 
         # "Tri-bala till Hora": Sthana + Dig + Kaala-up-to-Hora (i.e. excluding
         # Ayana), used only for Yuddha Bala below.
@@ -443,10 +487,24 @@ def compute_shadbala(birth_dt_local, latitude: float, longitude: float, tz_offse
             "total_rupa": total_rupa,
             "required_rupa": required,
             "sufficient": total_rupa >= required,
+            "component_minimums": COMPONENT_MINIMUM_VIRUPAS[planet],
         }
 
-    _apply_yuddha_bala(results)
+    if apply_yuddha_bala:
+        _apply_yuddha_bala(results)
+    _apply_relative_rank(results)
     return results
+
+
+def _apply_relative_rank(results: dict) -> None:
+    """Ratio = attained rupas / required rupas, and the Relative Rank the
+    grahas are classically ordered on (1 = strongest). The ranking goes on the
+    ratio, not on the raw total: the requirements differ per graha, so a graha
+    with a smaller total can still be the better placed one."""
+    for data in results.values():
+        data["ratio"] = data["total_rupa"] / data["required_rupa"]
+    for rank, planet in enumerate(sorted(results, key=lambda p: results[p]["ratio"], reverse=True), 1):
+        results[planet]["relative_rank"] = rank
 
 
 def _apply_yuddha_bala(results: dict) -> None:
@@ -527,24 +585,25 @@ def _bhava_sign_group(longitude: float) -> str:
     return "jalachara"  # _JALACHARA_SIGNS
 
 
-def _bhava_dig_bala(bhava_madhya: float, angle_by_house: dict) -> float:
-    """Reconstructed from the documented special cases (e.g. a Nara-sign
-    Ascendant gets 60, a Nara-sign 7th gets 0): each bhava's Dig Bala is its
-    angular distance from the kendra where its own sign-group is weakest,
-    divided by 3 -- the same mechanic as planetary Dig Bala."""
+def _bhava_dig_bala(house_number: int, bhava_madhya: float) -> float:
+    """A bhava's Dig Bala is its distance -- counted in whole houses, not in
+    degrees -- from the kendra where its own sign-group is weakest, times 30
+    and divided by 3. So it always lands on a multiple of 10, from 0 at the
+    weak kendra to 60 at the opposite one."""
     weak_house = BHAVA_SIGN_GROUP_WEAK_HOUSE[_bhava_sign_group(bhava_madhya)]
-    return _angular_sep(bhava_madhya, angle_by_house[weak_house]) / 3.0
+    houses_away = abs(house_number - weak_house)
+    houses_away = min(houses_away, 12 - houses_away)
+    return houses_away * 30.0 / 3.0
 
 
-def _bhava_drishti_bala(bhava_madhya: float, planet_longitude: dict, sign_indices: dict) -> float:
-    bhava_sign = _sign_index(bhava_madhya)
+def _bhava_drishti_bala(bhava_madhya: float, planet_longitude: dict) -> float:
+    """Net drishti falling on the Bhava Madhya. Each graha's drishti is
+    quartered before being added or subtracted -- except Jupiter's and
+    Mercury's, which count on a bhava in full."""
     total = 0.0
     for other in CLASSICAL_GRAHAS:
-        distance = _house_distance(sign_indices[other], bhava_sign)
-        virupa = _aspect_virupa(other, distance)
-        if virupa == 0.0:
-            continue
-        total += virupa if _is_benefic_aspect(other, planet_longitude) else -virupa
+        signed = _signed_drishti(other, bhava_madhya, planet_longitude)
+        total += signed if other in FULL_BHAVA_DRISHTI_GRAHAS else signed / 4.0
     return total
 
 
@@ -558,12 +617,10 @@ def compute_bhavabala(birth_dt_local, latitude: float, longitude: float, tz_offs
     kundli = get_kundli(birth_dt_local, latitude, longitude, tz_offset)
     dt_utc = birth_dt_local - timedelta(hours=tz_offset)
     planet_longitude = {p["planet"]: p["longitude"] for p in kundli["planets"]}
-    sign_indices = {pl: varga.d1_sign_index(lon) for pl, lon in planet_longitude.items() if pl in CLASSICAL_GRAHAS}
 
     asc_lon = ephem.sidereal_ascendant(dt_utc, latitude, longitude)
     mc_lon = ephem.sidereal_mc(dt_utc, longitude)
     madhyas = _sripati_bhava_madhyas(asc_lon, mc_lon)
-    angle_by_house = {1: madhyas[0], 4: madhyas[3], 7: madhyas[6], 10: madhyas[9]}
 
     results = []
     for house_num in range(1, 13):
@@ -572,8 +629,8 @@ def compute_bhavabala(birth_dt_local, latitude: float, longitude: float, tz_offs
         lord = RASHI_LORDS[sign_idx]
 
         bhavadhipati = shadbala_results.get(lord, {}).get("total_virupa", 0.0)
-        dig = _bhava_dig_bala(madhya, angle_by_house)
-        drishti = _bhava_drishti_bala(madhya, planet_longitude, sign_indices)
+        dig = _bhava_dig_bala(house_num, madhya)
+        drishti = _bhava_drishti_bala(madhya, planet_longitude)
         total_virupa = bhavadhipati + dig + drishti
 
         results.append({
@@ -587,5 +644,8 @@ def compute_bhavabala(birth_dt_local, latitude: float, longitude: float, tz_offs
             "total_virupa": total_virupa,
             "total_rupa": total_virupa / 60.0,
         })
+
+    for rank, bhava in enumerate(sorted(results, key=lambda h: h["total_virupa"], reverse=True), 1):
+        bhava["relative_rank"] = rank
 
     return results
