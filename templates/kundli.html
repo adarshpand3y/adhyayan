@@ -1,0 +1,1147 @@
+{% extends 'base.html' %}
+
+{% block title %}Kundli{% endblock title %}
+{% block metadesc %}Free online Kundli - birth chart, panchang, vimshottari dasha and graha bala{% endblock metadesc %}
+{% block ogtitle %}Kundli{% endblock ogtitle %}
+{% block ogdesc %}Free online Kundli - birth chart, panchang, vimshottari dasha and graha bala{% endblock ogdesc %}
+{% block twtitle %}Kundli{% endblock twtitle %}
+{% block twdesc %}Free online Kundli - birth chart, panchang, vimshottari dasha and graha bala{% endblock twdesc %}
+
+{% block body %}
+<style>
+  .kundli-hero {
+    background: linear-gradient(135deg, #eef4ff 0%, #fdf6ec 100%);
+    border-bottom: 1px solid rgba(14, 63, 126, 0.08);
+  }
+
+  .kundli-form-card {
+    border: 1px solid rgba(14, 63, 126, 0.08);
+    border-radius: 1rem;
+  }
+
+  .kundli-form-card .form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.35rem;
+  }
+
+  .kundli-form-card .input-group-text {
+    background: #f6f8fb;
+    border-right: 0;
+    color: #6c757d;
+    width: 2.75rem;
+    justify-content: center;
+  }
+
+  .kundli-form-card .input-group .form-control {
+    border-left: 0;
+  }
+
+  .kundli-form-card .input-group .form-control:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
+  }
+
+  .kundli-form-card .input-group:focus-within {
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0 0.2rem rgba(0, 135, 255, 0.15);
+  }
+
+  .kundli-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #adb5bd;
+  }
+
+  .kundli-section-title::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    margin-left: 0.75rem;
+    background: rgba(14, 63, 126, 0.1);
+  }
+
+  .kundli-result-heading {
+    scroll-margin-top: 1rem;
+  }
+  /* ---- results ---- */
+  .k-results {
+    --k-surface: #ffffff;
+    --k-plane: #f8f9fa;
+    --k-ink: #0b0b0b;
+    --k-ink-secondary: #52514e;
+    --k-ink-muted: #898781;
+    --k-hairline: #e6e4dc;
+    --k-ring: rgba(14, 63, 126, 0.08);
+    --k-accent: #2a78d6;
+    --k-accent-wash: #eaf1fd;
+    --k-good: #0ca30c;
+    --k-good-track: #daf2da;
+    --k-good-ink: #006300;
+    --k-warning: #fab219;
+    --k-warning-track: #fdeecb;
+    --k-warning-ink: #8a5000;
+    --k-critical: #d03b3b;
+    --k-critical-ink: #b3261e;
+    --k-seq-track: #dbe9fb;
+    color: var(--k-ink);
+  }
+
+  .k-ink-muted {
+    color: var(--k-ink-muted) !important;
+  }
+
+  .k-ink-secondary {
+    color: var(--k-ink-secondary) !important;
+  }
+
+  .k-num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* stat tiles */
+  .k-tile {
+    background: var(--k-surface);
+    border: 1px solid var(--k-ring);
+    border-radius: 0.75rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .k-tile-accent {
+    background: var(--k-accent-wash);
+    border-color: rgba(42, 120, 214, 0.22);
+  }
+
+  .k-tile-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--k-ink-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .k-tile-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--k-ink);
+  }
+
+  .k-tile-value-sm {
+    font-size: 1.125rem;
+  }
+
+  .k-tile-sub {
+    font-size: 0.8rem;
+    color: var(--k-ink-secondary);
+    margin-top: 0.15rem;
+  }
+
+  /* cards */
+  .k-card {
+    background: var(--k-surface);
+    border: 1px solid var(--k-ring);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .k-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    background: var(--k-plane);
+    border-bottom: 1px solid var(--k-hairline);
+  }
+
+  .k-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .k-card-icon {
+    color: var(--k-accent);
+    margin-right: 0.5rem;
+  }
+
+  .k-card-body {
+    padding: 1.25rem;
+  }
+
+  .k-rule {
+    border-top: 1px solid var(--k-hairline);
+    opacity: 1;
+    margin: 1.5rem 0;
+  }
+
+  .k-level-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--k-ink-muted);
+  }
+
+  /* tables */
+  .k-table {
+    --bs-table-bg: transparent;
+    margin-bottom: 0;
+  }
+
+  .k-table>thead>tr>th {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--k-ink-muted);
+    border-bottom: 1px solid var(--k-hairline);
+    white-space: nowrap;
+  }
+
+  .k-table>tbody>tr>td {
+    border-bottom: 1px solid var(--k-hairline);
+    vertical-align: middle;
+  }
+
+  .k-table>tbody>tr:last-child>td {
+    border-bottom: 0;
+  }
+
+  .k-table-compact>tbody>tr>td {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    font-size: 0.875rem;
+  }
+
+  .k-row-asc>td {
+    background: var(--k-plane);
+  }
+
+  .k-row-total>td {
+    font-weight: 600;
+    border-top: 1px solid var(--k-hairline);
+  }
+
+  .k-detail-row>td {
+    background: var(--k-plane);
+  }
+
+  .k-details-btn {
+    text-decoration: none;
+    font-size: 0.8rem;
+    padding: 0 0.25rem;
+  }
+
+  /* badges: colour never rides alone, every one carries an icon and a word */
+  .k-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    margin: 0.1rem 0.15rem 0.1rem 0;
+    border: 1px solid transparent;
+  }
+
+  .k-badge-good {
+    color: var(--k-good-ink);
+    background: var(--k-good-track);
+    border-color: rgba(12, 163, 12, 0.25);
+  }
+
+  .k-badge-warning {
+    color: var(--k-warning-ink);
+    background: var(--k-warning-track);
+    border-color: rgba(250, 178, 25, 0.4);
+  }
+
+  .k-badge-critical {
+    color: var(--k-critical-ink);
+    background: #fbe4e4;
+    border-color: rgba(208, 59, 59, 0.25);
+  }
+
+  .k-badge-neutral {
+    color: var(--k-ink-secondary);
+    background: var(--k-plane);
+    border-color: var(--k-hairline);
+  }
+
+  /* chart */
+  .k-chart {
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .k-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-top: 0.875rem;
+    font-size: 0.78rem;
+    color: var(--k-ink-secondary);
+  }
+
+  .k-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .k-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: 0 0 auto;
+  }
+
+  /* dasha chain */
+  .k-chain {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .k-chain-step {
+    flex: 1 1 8.5rem;
+    min-width: 8.5rem;
+    background: var(--k-plane);
+    border: 1px solid var(--k-hairline);
+    border-left: 3px solid var(--k-accent);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .k-chain-level {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--k-ink-muted);
+  }
+
+  .k-chain-lord {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .k-chain-dates {
+    font-size: 0.72rem;
+    color: var(--k-ink-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .k-chain-sep {
+    align-self: center;
+    color: var(--k-ink-muted);
+    font-size: 0.7rem;
+  }
+
+  .k-row-active>td {
+    background: var(--k-accent-wash);
+    font-weight: 600;
+  }
+
+  .k-row-active>td:first-child {
+    box-shadow: inset 3px 0 0 var(--k-accent);
+  }
+
+  .k-level-lord {
+    white-space: nowrap;
+  }
+
+  .k-accordion .accordion-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    gap: 0.6rem;
+  }
+
+  .k-accordion .accordion-button:not(.collapsed) {
+    background: var(--k-accent-wash);
+    box-shadow: none;
+  }
+
+  .k-dasha-lord {
+    display: inline-block;
+    font-weight: 600;
+    min-width: 5rem;
+  }
+
+  /* meters: fill carries severity, track is a lighter step of the same hue */
+  .k-meter-col {
+    width: 13rem;
+    min-width: 11rem;
+  }
+
+  .k-meter {
+    position: relative;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--k-seq-track);
+    overflow: hidden;
+  }
+
+  .k-meter-fill {
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+    background: var(--k-accent);
+  }
+
+  .k-meter-good {
+    background: var(--k-good-track);
+  }
+
+  .k-meter-good .k-meter-fill {
+    background: var(--k-good);
+  }
+
+  .k-meter-warning {
+    background: var(--k-warning-track);
+  }
+
+  .k-meter-warning .k-meter-fill {
+    background: var(--k-warning);
+  }
+
+  .k-meter-target {
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 50%;
+    width: 2px;
+    background: var(--k-ink-secondary);
+    opacity: 0.55;
+  }
+
+  .k-meter-caption {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--k-ink-secondary);
+  }
+
+  .k-meter-good+.k-meter-caption i {
+    color: var(--k-good-ink);
+  }
+
+  .k-meter-warning+.k-meter-caption i {
+    color: var(--k-warning-ink);
+  }
+
+  .k-sunline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    font-size: 0.9rem;
+    color: var(--k-ink-secondary);
+  }
+
+  @media print {
+
+    .kundli-hero,
+    .kundli-form-card,
+    nav,
+    footer,
+    .d-print-none {
+      display: none !important;
+    }
+
+    .k-card {
+      break-inside: avoid;
+      border-color: #ccc;
+    }
+
+    .k-card-head {
+      background: #fff;
+    }
+
+    .accordion-collapse {
+      display: block !important;
+    }
+  }
+</style>
+
+<div class="kundli-hero py-5 mb-4">
+  <div class="container text-center">
+    <h1 class="mb-2">Kundli</h1>
+    <p class="text-muted mb-0">
+      Your birth chart, panchang, vimshottari dasha and graha bala &mdash; computed with the Lahiri ayanamsa.
+    </p>
+  </div>
+</div>
+
+<div class="container pb-5">
+  <div class="card kundli-form-card bottom-shadow mb-4">
+    <div class="card-body p-4">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="kundli-section-title d-flex align-items-center mb-3">Birth details</div>
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-md-4">
+            <label class="form-label" for="id_name">Name</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+              <input type="text" id="id_name" name="name" class="form-control" maxlength="60"
+                placeholder="Whose kundli is this?" value="{{ form.name }}">
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label" for="id_date">Date of birth</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
+              <input type="date" id="id_date" name="date" class="form-control" value="{{ form.date }}" required>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label" for="id_time">Time of birth</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-regular fa-clock"></i></span>
+              <input type="time" id="id_time" name="time" class="form-control" value="{{ form.time }}" step="60"
+                required>
+            </div>
+            <div class="form-text">As exact as you know it &mdash; the ascendant shifts every few minutes.</div>
+          </div>
+        </div>
+
+        <div class="kundli-section-title d-flex align-items-center mb-3">Place of birth</div>
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-4">
+            <label class="form-label" for="id_latitude">Latitude</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+              <input type="text" inputmode="decimal" id="id_latitude" name="latitude" class="form-control"
+                placeholder="28.6139" value="{{ form.latitude }}" required>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <label class="form-label" for="id_longitude">Longitude</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-location-crosshairs"></i></span>
+              <input type="text" inputmode="decimal" id="id_longitude" name="longitude" class="form-control"
+                placeholder="77.2090" value="{{ form.longitude }}" required>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label" for="id_tz_offset">Timezone offset (hours)</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
+              <input type="text" inputmode="decimal" id="id_tz_offset" name="tz_offset" class="form-control"
+                placeholder="5.5" value="{{ form.tz_offset }}" required>
+            </div>
+            <div class="form-text">India is +5.5. Use the offset in force at the place and time of birth.</div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary px-4">
+            Generate Kundli
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if error %}
+  <div class="alert alert-danger d-flex align-items-start" role="alert">
+    <i class="fa-solid fa-circle-exclamation me-2 mt-1"></i>
+    <div>{{ error }}</div>
+  </div>
+  {% endif %}
+
+  {% if kundli %}
+  <div class="k-results">
+
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h2 class="h3 mb-1">{% if form.name %}Kundli for {{ form.name }}{% else %}Your Kundli{% endif %}</h2>
+        <p class="k-ink-muted small mb-0">
+          Born {{ kundli.birth_datetime_local|date:"j M Y" }} at {{ kundli.birth_datetime_local|date:"H:i" }}
+          &middot; {{ form.latitude }}, {{ form.longitude }}
+          &middot; UTC{% if form.tz_offset|first != '-' %}+{% endif %}{{ form.tz_offset }}
+          &middot; Lahiri ayanamsa {{ kundli.ayanamsa|floatformat:4 }}&deg;
+        </p>
+      </div>
+      <button type="button" class="btn btn-outline-secondary btn-sm d-print-none" onclick="window.print()">
+        <i class="fa-solid fa-print me-1"></i> Print
+      </button>
+    </div>
+
+    <!-- Summary tiles -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="k-tile h-100">
+          <div class="k-tile-label">Lagna (ascendant)</div>
+          <div class="k-tile-value">{{ kundli.ascendant.rashi }}</div>
+          <div class="k-tile-sub">{{ kundli.ascendant.degree_in_rashi|floatformat:2 }}&deg; &middot;
+            {{ kundli.ascendant.nakshatra }} pada {{ kundli.ascendant.pada }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="k-tile h-100">
+          <div class="k-tile-label">Chandra rashi (moon sign)</div>
+          <div class="k-tile-value">{{ moon.rashi }}</div>
+          <div class="k-tile-sub">{{ moon.degree_in_rashi|floatformat:2 }}&deg; in house {{ moon.house }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="k-tile h-100">
+          <div class="k-tile-label">Janma nakshatra</div>
+          <div class="k-tile-value">{{ moon.nakshatra }}</div>
+          <div class="k-tile-sub">Pada {{ moon.pada }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="k-tile k-tile-accent h-100">
+          <div class="k-tile-label">Mahadasha running now</div>
+          <div class="k-tile-value">{{ active_chain.0.lord }}</div>
+          <div class="k-tile-sub">Until {{ active_chain.0.end|date:"j M Y" }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Birth chart -->
+    <section class="k-card mb-4">
+      <div class="k-card-head">
+        <h3 class="k-card-title"><i class="fa-solid fa-star-of-david k-card-icon"></i>Birth Chart</h3>
+        <span class="k-ink-muted small">North Indian &middot; whole-sign houses</span>
+      </div>
+      <div class="k-card-body">
+        <div class="row g-4">
+          <div class="col-12 col-xl-5">
+            {% if north_indian_chart %}
+            <svg class="k-chart" viewBox="0 0 400 400" role="img" xmlns="http://www.w3.org/2000/svg"
+              aria-label="North Indian birth chart. The planet positions are listed in the table beside it.">
+              <rect x="0" y="0" width="400" height="400" rx="4" fill="#fffdf9" />
+              {% for h in north_indian_chart %}
+              <polygon points="{{ h.points }}" fill="{% if h.is_ascendant %}#eaf1fd{% else %}none{% endif %}"
+                stroke="#c9c4b5" stroke-width="1" stroke-linejoin="round">
+                <title>House {{ h.house }} &mdash; {{ h.rashi_name }}</title>
+              </polygon>
+              {% endfor %}
+              <rect x="0.5" y="0.5" width="399" height="399" rx="4" fill="none" stroke="#b3ad9c" stroke-width="1.5" />
+              {% for h in north_indian_chart %}
+              <text x="{{ h.cx }}" y="{{ h.cy }}" dy="-11" font-size="10" text-anchor="middle" fill="#898781"
+                font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">{{ h.rashi_number }}{% if h.is_ascendant %} &middot; Asc {{ h.asc_degree }}&deg;{% endif %}</text>
+              <text x="{{ h.cx }}" y="{{ h.cy }}" dy="7" font-size="9.5" font-weight="600" text-anchor="middle"
+                font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+                {% for p in h.planets %}<tspan x="{{ h.cx }}" dy="{% if forloop.first %}0{% else %}11{% endif %}" fill="{{ p.color }}">{{ p.text }}</tspan>{% endfor %}
+              </text>
+              {% endfor %}
+            </svg>
+
+            <div class="k-legend">
+              <span class="k-legend-item"><span class="k-dot" style="background:#006300"></span>e &mdash; exalted</span>
+              <span class="k-legend-item"><span class="k-dot" style="background:#b3261e"></span>d &mdash;
+                debilitated</span>
+              <span class="k-legend-item"><span class="k-dot" style="background:#8a5000"></span>c &mdash; combust</span>
+              <span class="k-legend-item"><span class="k-dot" style="background:#0b0b0b"></span>R &mdash;
+                retrograde</span>
+            </div>
+            <p class="k-ink-muted small mb-0 mt-2">
+              The small grey number is the rashi in that house (1&nbsp;=&nbsp;Mesha &hellip; 12&nbsp;=&nbsp;Meena). The
+              shaded house is the lagna, shown with the ascendant's exact degree.
+            </p>
+            {% endif %}
+          </div>
+
+          <div class="col-12 col-xl-7">
+            <div class="table-responsive">
+              <table class="table k-table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Graha</th>
+                    <th>Rashi</th>
+                    <th class="text-end">Degree</th>
+                    <th>Nakshatra</th>
+                    <th class="text-end">House</th>
+                    <th>State</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="k-row-asc">
+                    <td><strong>Ascendant</strong></td>
+                    <td>{{ kundli.ascendant.rashi }}</td>
+                    <td class="text-end k-num">{{ kundli.ascendant.degree_in_rashi|floatformat:2 }}&deg;</td>
+                    <td>{{ kundli.ascendant.nakshatra }} <span class="k-ink-muted">&middot; pada
+                        {{ kundli.ascendant.pada }}</span></td>
+                    <td class="text-end k-num">1</td>
+                    <td class="k-ink-muted">Lagna</td>
+                  </tr>
+                  {% for p in kundli.planets %}
+                  <tr>
+                    <td><strong>{{ p.planet }}</strong></td>
+                    <td>{{ p.rashi }}</td>
+                    <td class="text-end k-num">{{ p.degree_in_rashi|floatformat:2 }}&deg;</td>
+                    <td>{{ p.nakshatra }} <span class="k-ink-muted">&middot; pada {{ p.pada }}</span></td>
+                    <td class="text-end k-num">{{ p.house }}</td>
+                    <td>
+                      {% if p.exalted %}<span class="k-badge k-badge-good"><i
+                          class="fa-solid fa-arrow-up"></i>Exalted</span>{% endif %}
+                      {% if p.debilitated %}<span class="k-badge k-badge-critical"><i
+                          class="fa-solid fa-arrow-down"></i>Debilitated</span>{% endif %}
+                      {% if p.combust %}<span class="k-badge k-badge-warning"><i
+                          class="fa-solid fa-fire"></i>Combust {{ p.sun_distance|floatformat:1 }}&deg;</span>{% endif %}
+                      {% if p.retrograde %}<span class="k-badge k-badge-neutral"><i
+                          class="fa-solid fa-rotate-left"></i>Retrograde</span>{% endif %}
+                      {% if not p.exalted and not p.debilitated and not p.combust and not p.retrograde %}<span
+                        class="k-ink-muted">&ndash;</span>{% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dasha -->
+    {% if dasha_levels %}
+    <section class="k-card mb-4">
+      <div class="k-card-head">
+        <h3 class="k-card-title"><i class="fa-solid fa-hourglass-half k-card-icon"></i>Vimshottari Dasha</h3>
+        <span class="k-ink-muted small">Running as on {{ as_of_dt|date:"j M Y, H:i" }}</span>
+      </div>
+      <div class="k-card-body">
+
+        <div class="k-chain mb-4">
+          {% for a in active_chain %}
+          <div class="k-chain-step">
+            <div class="k-chain-level">{{ a.level }}</div>
+            <div class="k-chain-lord">{{ a.lord }}</div>
+            <div class="k-chain-dates">until {{ a.end|date:"j M Y" }}</div>
+          </div>
+          {% if not forloop.last %}<i class="fa-solid fa-chevron-right k-chain-sep"></i>{% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="row g-3">
+          {% for lvl in dasha_levels %}
+          <div class="col-12 col-md-6 col-xl">
+            <div class="k-level-title">{{ lvl.level }}</div>
+            <table class="table table-sm k-table k-table-compact mb-0">
+              <tbody>
+                {% for p in lvl.periods %}
+                <tr class="{% if forloop.counter0 == lvl.active_index %}k-row-active{% endif %}">
+                  <td class="k-level-lord">{{ p.lord }}</td>
+                  <td class="text-end k-num k-ink-secondary">
+                    {% if forloop.parentloop.counter0 >= 3 %}
+                    {{ p.start|date:"j M y, H:i" }}
+                    {% else %}
+                    {{ p.start|date:"j M Y" }}
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="k-ink-muted small mt-3 mb-0">
+          Each column lists all nine periods of that level with the date each begins. The highlighted row is the one
+          running now; the next column drills into it.
+        </p>
+
+        {% if dashas %}
+        <hr class="k-rule">
+        <div class="k-level-title mb-2">All Mahadashas</div>
+        <div class="accordion k-accordion" id="dashaAccordion">
+          {% for d in dashas %}
+          <div class="accordion-item">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#dasha{{ forloop.counter }}">
+                <span class="k-dasha-lord">{{ d.lord }}</span>
+                <span class="k-ink-secondary">{{ d.start|date:"j M Y" }} &ndash; {{ d.end|date:"j M Y" }}</span>
+                {% if d.partial %}<span class="k-badge k-badge-neutral ms-2">Running at birth</span>{% endif %}
+              </button>
+            </h4>
+            <div id="dasha{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#dashaAccordion">
+              <div class="accordion-body">
+                <table class="table table-sm k-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>Antardasha</th>
+                      <th class="text-end">Start</th>
+                      <th class="text-end">End</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for a in d.antardashas %}
+                    <tr>
+                      <td>{{ a.lord }}</td>
+                      <td class="text-end k-num">{{ a.start|date:"j M Y" }}</td>
+                      <td class="text-end k-num">{{ a.end|date:"j M Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Panchang -->
+    {% if panchang %}
+    <section class="k-card mb-4">
+      <div class="k-card-head">
+        <h3 class="k-card-title"><i class="fa-solid fa-sun k-card-icon"></i>Panchang at Birth</h3>
+        <span class="k-ink-muted small">{{ panchang.date }} &middot; {{ panchang.weekday }}</span>
+      </div>
+      <div class="k-card-body">
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="k-tile h-100">
+              <div class="k-tile-label">Tithi</div>
+              <div class="k-tile-value k-tile-value-sm">{{ panchang.tithi.name }}</div>
+              <div class="k-tile-sub">{{ panchang.tithi.paksha }} paksha &middot; ends
+                {{ panchang.tithi.ends_at|date:"j M, H:i" }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="k-tile h-100">
+              <div class="k-tile-label">Nakshatra</div>
+              <div class="k-tile-value k-tile-value-sm">{{ panchang.nakshatra.name }}</div>
+              <div class="k-tile-sub">Pada {{ panchang.nakshatra.pada }} &middot; ends
+                {{ panchang.nakshatra.ends_at|date:"j M, H:i" }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="k-tile h-100">
+              <div class="k-tile-label">Yoga</div>
+              <div class="k-tile-value k-tile-value-sm">{{ panchang.yoga.name }}</div>
+              <div class="k-tile-sub">Ends {{ panchang.yoga.ends_at|date:"j M, H:i" }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="k-tile h-100">
+              <div class="k-tile-label">Karana</div>
+              <div class="k-tile-value k-tile-value-sm">{{ panchang.karana.name }}</div>
+              <div class="k-tile-sub">Ends {{ panchang.karana.ends_at|date:"j M, H:i" }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="k-sunline mb-4">
+          <span><i class="fa-solid fa-arrow-up-right-dots k-ink-muted me-2"></i>Sunrise
+            <strong>{{ panchang.sunrise|date:"H:i" }}</strong></span>
+          <span><i class="fa-solid fa-arrow-down-right-dots k-ink-muted me-2"></i>Sunset
+            <strong>{{ panchang.sunset|date:"H:i" }}</strong></span>
+        </div>
+
+        <div class="k-level-title mb-2">Choghadiya</div>
+        <div class="row g-4">
+          <div class="col-12 col-lg-6">
+            <div class="k-ink-secondary small fw-semibold mb-2">Day</div>
+            <table class="table table-sm k-table k-table-compact mb-0">
+              <tbody>
+                {% for c in panchang.choghadiya %}{% if c.period == 'Day' %}
+                <tr>
+                  <td class="k-num k-ink-secondary">{{ c.start|date:"H:i" }}&ndash;{{ c.end|date:"H:i" }}</td>
+                  <td>{{ c.name }}</td>
+                  <td class="text-end">
+                    {% if c.nature == 'Shubh' %}<span class="k-badge k-badge-good"><i
+                        class="fa-solid fa-check"></i>Shubh</span>
+                    {% elif c.nature == 'Ashubh' %}<span class="k-badge k-badge-critical"><i
+                        class="fa-solid fa-xmark"></i>Ashubh</span>
+                    {% else %}<span class="k-badge k-badge-neutral">{{ c.nature }}</span>{% endif %}
+                  </td>
+                </tr>
+                {% endif %}{% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="k-ink-secondary small fw-semibold mb-2">Night</div>
+            <table class="table table-sm k-table k-table-compact mb-0">
+              <tbody>
+                {% for c in panchang.choghadiya %}{% if c.period == 'Night' %}
+                <tr>
+                  <td class="k-num k-ink-secondary">{{ c.start|date:"H:i" }}&ndash;{{ c.end|date:"H:i" }}</td>
+                  <td>{{ c.name }}</td>
+                  <td class="text-end">
+                    {% if c.nature == 'Shubh' %}<span class="k-badge k-badge-good"><i
+                        class="fa-solid fa-check"></i>Shubh</span>
+                    {% elif c.nature == 'Ashubh' %}<span class="k-badge k-badge-critical"><i
+                        class="fa-solid fa-xmark"></i>Ashubh</span>
+                    {% else %}<span class="k-badge k-badge-neutral">{{ c.nature }}</span>{% endif %}
+                  </td>
+                </tr>
+                {% endif %}{% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Shadbala / Bhavabala -->
+    {% if shadbala %}
+    <section class="k-card mb-4">
+      <div class="k-card-head">
+        <h3 class="k-card-title"><i class="fa-solid fa-scale-balanced k-card-icon"></i>Graha Bala (Shadbala)</h3>
+        <span class="k-ink-muted small">Strongest first</span>
+      </div>
+      <div class="k-card-body">
+        <div class="table-responsive">
+          <table class="table k-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Graha</th>
+                <th class="k-meter-col">Strength vs requirement</th>
+                <th class="text-end">Attained</th>
+                <th class="text-end">Required</th>
+                <th class="text-end">Ratio</th>
+                <th class="text-end">Rank</th>
+                <th class="d-print-none"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in shadbala %}
+              <tr>
+                <td><strong>{{ d.planet }}</strong></td>
+                <td class="k-meter-col">
+                  <div class="k-meter {% if d.sufficient %}k-meter-good{% else %}k-meter-warning{% endif %}">
+                    <div class="k-meter-fill" style="width: {{ d.bar_pct }}%"></div>
+                    <div class="k-meter-target" title="Required strength"></div>
+                  </div>
+                  <div class="k-meter-caption">
+                    {% if d.sufficient %}<i class="fa-solid fa-circle-check"></i>Sufficient
+                    {% else %}<i class="fa-solid fa-triangle-exclamation"></i>Below requirement{% endif %}
+                  </div>
+                </td>
+                <td class="text-end k-num"><strong>{{ d.total_rupa|floatformat:2 }}</strong> <span
+                    class="k-ink-muted">rupa</span></td>
+                <td class="text-end k-num k-ink-secondary">{{ d.required_rupa|floatformat:2 }}</td>
+                <td class="text-end k-num">{{ d.ratio|floatformat:2 }}&times;</td>
+                <td class="text-end k-num k-ink-secondary">{{ d.relative_rank }}</td>
+                <td class="text-end d-print-none">
+                  <button class="btn btn-sm btn-link k-details-btn" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#sb-{{ d.planet }}">Details</button>
+                </td>
+              </tr>
+              <tr class="collapse k-detail-row" id="sb-{{ d.planet }}">
+                <td colspan="7">
+                  <div class="row g-4">
+                    <div class="col-12 col-lg-4">
+                      <div class="k-level-title mb-2">Six components (virupas)</div>
+                      <table class="table table-sm k-table k-table-compact mb-0">
+                        <tbody>
+                          <tr>
+                            <td>Sthana bala</td>
+                            <td class="text-end k-num">{{ d.sthana_bala.total|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Dig bala</td>
+                            <td class="text-end k-num">{{ d.dig_bala|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Kaala bala</td>
+                            <td class="text-end k-num">{{ d.kaala_bala.total|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Chesta bala</td>
+                            <td class="text-end k-num">{{ d.chesta_bala|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Naisargika bala</td>
+                            <td class="text-end k-num">{{ d.naisargika_bala|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Drik bala</td>
+                            <td class="text-end k-num">{{ d.drik_bala|floatformat:2 }}</td>
+                          </tr>
+                          {% if d.yuddha_bala %}
+                          <tr>
+                            <td>Yuddha bala</td>
+                            <td class="text-end k-num">{{ d.yuddha_bala|floatformat:2 }}</td>
+                          </tr>
+                          {% endif %}
+                          <tr class="k-row-total">
+                            <td>Total</td>
+                            <td class="text-end k-num">{{ d.total_virupa|floatformat:2 }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                      <div class="k-level-title mb-2">Sthana bala breakdown</div>
+                      <table class="table table-sm k-table k-table-compact mb-3">
+                        <tbody>
+                          <tr>
+                            <td>Uchcha (exaltation)</td>
+                            <td class="text-end k-num">{{ d.sthana_bala.uchcha|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Saptavargaja</td>
+                            <td class="text-end k-num">{{ d.sthana_bala.saptavargaja|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Ojha-yugma (odd/even)</td>
+                            <td class="text-end k-num">{{ d.sthana_bala.ojha_yugma|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Kendradi (angular)</td>
+                            <td class="text-end k-num">{{ d.sthana_bala.kendradi|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Drekkana</td>
+                            <td class="text-end k-num">{{ d.sthana_bala.drekkana|floatformat:2 }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="k-level-title mb-2">Saptavargaja detail</div>
+                      <table class="table table-sm k-table k-table-compact mb-0">
+                        <thead>
+                          <tr>
+                            <th>Varga</th>
+                            <th>Dispositor</th>
+                            <th>Relation</th>
+                            <th class="text-end">Points</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for v in d.sthana_bala.saptavargaja_breakdown %}
+                          <tr>
+                            <td>{{ v.varga }}</td>
+                            <td>{{ v.dispositor }}</td>
+                            <td class="k-ink-secondary">{{ v.relationship }}</td>
+                            <td class="text-end k-num">{{ v.points|floatformat:2 }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                      <div class="k-level-title mb-2">Kaala bala breakdown</div>
+                      <table class="table table-sm k-table k-table-compact mb-2">
+                        <tbody>
+                          <tr>
+                            <td>Nathonnata (day/night)</td>
+                            <td class="text-end k-num">{{ d.kaala_bala.nathonnata|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Paksha (fortnight)</td>
+                            <td class="text-end k-num">{{ d.kaala_bala.paksha|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Tribhaga</td>
+                            <td class="text-end k-num">{{ d.kaala_bala.tribhaga|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Varsha/masa/dina/hora</td>
+                            <td class="text-end k-num">{{ d.kaala_bala.varsha_masa_dina_hora|floatformat:2 }}</td>
+                          </tr>
+                          <tr>
+                            <td>Ayana (declination)</td>
+                            <td class="text-end k-num">{{ d.kaala_bala.ayana|floatformat:2 }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <p class="k-ink-muted small mb-0">
+                        Varsha lord {{ d.kaala_bala.lords.varsha }} &middot;
+                        Masa lord {{ d.kaala_bala.lords.masa }} &middot;
+                        Dina lord {{ d.kaala_bala.lords.dina }} &middot;
+                        Hora lord {{ d.kaala_bala.lords.hora }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="k-ink-muted small mt-3 mb-0">
+          The bar runs from zero to twice the required strength, and the notch marks the requirement itself. 60 virupas
+          = 1 rupa. Rahu and Ketu are excluded, as they have no classical shadbala. Rank orders the grahas on ratio
+          rather than on the raw total. Formulas follow B.V. Raman's <em>Graha and Bhava Balas</em>.
+        </p>
+      </div>
+    </section>
+
+    <section class="k-card mb-4">
+      <div class="k-card-head">
+        <h3 class="k-card-title"><i class="fa-solid fa-house-chimney k-card-icon"></i>Bhava Bala</h3>
+        <span class="k-ink-muted small">Sripati bhava-madhya cusps</span>
+      </div>
+      <div class="k-card-body">
+        <div class="table-responsive">
+          <table class="table k-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th class="text-end">House</th>
+                <th>Sign</th>
+                <th>Lord</th>
+                <th class="k-meter-col">Strength</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Adhipati</th>
+                <th class="text-end">Dig</th>
+                <th class="text-end">Drishti</th>
+                <th class="text-end">Rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for h in bhavabala %}
+              <tr>
+                <td class="text-end k-num"><strong>{{ h.house }}</strong></td>
+                <td>{{ h.sign }}</td>
+                <td>{{ h.lord }}</td>
+                <td class="k-meter-col">
+                  <div class="k-meter k-meter-seq">
+                    <div class="k-meter-fill" style="width: {{ h.bar_pct }}%"></div>
+                  </div>
+                </td>
+                <td class="text-end k-num"><strong>{{ h.total_rupa|floatformat:2 }}</strong> <span
+                    class="k-ink-muted">rupa</span></td>
+                <td class="text-end k-num k-ink-secondary">{{ h.bhavadhipati_bala|floatformat:2 }}</td>
+                <td class="text-end k-num k-ink-secondary">{{ h.bhava_dig_bala|floatformat:2 }}</td>
+                <td class="text-end k-num k-ink-secondary">{{ h.bhava_drishti_bala|floatformat:2 }}</td>
+                <td class="text-end k-num k-ink-secondary">{{ h.relative_rank }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="k-ink-muted small mt-3 mb-0">
+          Bars are scaled against the strongest bhava in this chart. Adhipati, Dig and Drishti columns are in virupas.
+        </p>
+      </div>
+    </section>
+    {% endif %}
+
+  </div>
+  {% endif %}
+</div>
+{% endblock body %}

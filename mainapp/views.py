@@ -15,6 +15,9 @@ from django.utils import timezone
 from datetime import timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 load_dotenv()
@@ -350,6 +353,8 @@ def _build_north_indian_chart(kundli):
     """Builds the per-house display data (rashi number + one line per planet,
     with degree/retrograde/combust/debilitated/exalted markers) for the fixed
     diamond layout above, given a get_kundli() result."""
+    from vedic_astro.constants import RASHIS
+
     planets_by_house = {}
     for p in kundli['planets']:
         flags = []
@@ -364,14 +369,17 @@ def _build_north_indian_chart(kundli):
         flag_str = f"({','.join(flags)})" if flags else ''
         text = f"{_PLANET_ABBR[p['planet']]} {p['degree_in_rashi']:.0f}°{flag_str}"
 
+        # Text-safe inks: the light status steps are illegible at 9px, so each
+        # dignity uses a dark step of the same hue. The letter flags above carry
+        # the same meaning, so colour is never the only channel.
         if p.get('exalted'):
-            color = '#198754'  # exalted: green
+            color = '#006300'  # exalted: green
         elif p.get('debilitated'):
-            color = '#c0392b'  # debilitated: red
+            color = '#b3261e'  # debilitated: red
         elif p.get('combust'):
-            color = '#b45f06'  # combust: amber
+            color = '#8a5000'  # combust: amber
         else:
-            color = '#1a1a1a'
+            color = '#0b0b0b'
         planets_by_house.setdefault(p['house'], []).append({'text': text, 'color': color})
 
     ascendant = kundli['ascendant']
@@ -384,7 +392,9 @@ def _build_north_indian_chart(kundli):
             'points': layout['points'],
             'cx': layout['cx'],
             'cy': layout['cy'],
+            'house': house_num,
             'rashi_number': rashi_index + 1,
+            'rashi_name': RASHIS[rashi_index],
             'planets': planets_by_house.get(house_num, []),
             'is_ascendant': house_num == 1,
             'asc_degree': f"{ascendant['degree_in_rashi']:.2f}" if house_num == 1 else None,
@@ -392,44 +402,55 @@ def _build_north_indian_chart(kundli):
     return chart
 
 
-def astro_lab(request):
-    """Manual test page for the standalone vedic_astro engine (panchang + kundli + dasha)."""
+def kundli(request):
+    """Kundli page: panchang, birth chart, vimshottari dasha and balas."""
     import datetime
     from vedic_astro import (
         get_panchang, get_kundli, compute_vimshottari, dasha_breakdown,
         compute_shadbala, compute_bhavabala,
     )
 
-    now = timezone.localtime()
     defaults = {
+        'name': '',
         'date': timezone.localdate().isoformat(),
         'time': '06:30',
         'latitude': '28.6139',
         'longitude': '77.2090',
         'tz_offset': '5.5',
-        'as_of_date': now.date().isoformat(),
-        'as_of_time': now.strftime('%H:%M'),
     }
     context = {'form': defaults, 'error': None}
 
     if request.method == 'POST':
         form = {k: request.POST.get(k, defaults[k]) for k in defaults}
+        form['name'] = form['name'].strip()[:60]
         context['form'] = form
         try:
-            date_val = datetime.date.fromisoformat(form['date'])
-            time_val = datetime.time.fromisoformat(form['time'])
-            lat = float(form['latitude'])
-            lon = float(form['longitude'])
-            tz_offset = float(form['tz_offset'])
-            birth_dt = datetime.datetime.combine(date_val, time_val)
+            try:
+                date_val = datetime.date.fromisoformat(form['date'])
+                time_val = datetime.time.fromisoformat(form['time'])
+            except ValueError:
+                raise ValueError('Please enter a valid date and time of birth.')
 
-            as_of_date = datetime.date.fromisoformat(form['as_of_date'])
-            as_of_time = datetime.time.fromisoformat(form['as_of_time'])
-            as_of_dt = datetime.datetime.combine(as_of_date, as_of_time)
+            try:
+                lat = float(form['latitude'])
+                lon = float(form['longitude'])
+                tz_offset = float(form['tz_offset'])
+            except ValueError:
+                raise ValueError('Latitude, longitude and timezone offset must be numbers.')
+
+            if not -90 <= lat <= 90:
+                raise ValueError('Latitude must be between -90 and 90.')
+            if not -180 <= lon <= 180:
+                raise ValueError('Longitude must be between -180 and 180.')
+            if not -12 <= tz_offset <= 14:
+                raise ValueError('Timezone offset must be between -12 and +14 hours.')
+
+            birth_dt = datetime.datetime.combine(date_val, time_val)
+            as_of_dt = timezone.localtime().replace(tzinfo=None)
 
             panchang = get_panchang(date_val, lat, lon, tz_offset)
-            kundli = get_kundli(birth_dt, lat, lon, tz_offset)
-            moon = next(p for p in kundli['planets'] if p['planet'] == 'Moon')
+            chart = get_kundli(birth_dt, lat, lon, tz_offset)
+            moon = next(p for p in chart['planets'] if p['planet'] == 'Moon')
             dashas = compute_vimshottari(moon['longitude'], birth_dt)
             dasha_levels = dasha_breakdown(moon['longitude'], birth_dt, as_of_dt)
             shadbala_raw = compute_shadbala(birth_dt, lat, lon, tz_offset)
@@ -437,19 +458,39 @@ def astro_lab(request):
 
             shadbala = sorted(
                 ({'planet': planet, **data} for planet, data in shadbala_raw.items()),
-                key=lambda d: d['total_virupa'], reverse=True,
+                key=lambda d: d['relative_rank'],
             )
-            bhavabala = sorted(bhavabala, key=lambda h: h['total_virupa'], reverse=True)
+            bhavabala = sorted(bhavabala, key=lambda h: h['relative_rank'])
+
+            # Meter widths. Shadbala is drawn against a 0-2x scale so the
+            # "required" mark always sits at the 50% point; bhavabala has no
+            # classical requirement, so it is scaled against the strongest bhava.
+            for d in shadbala:
+                d['bar_pct'] = min(100, round(d['ratio'] / 2 * 100))
+            max_bhava = max(h['total_rupa'] for h in bhavabala) or 1
+            for h in bhavabala:
+                h['bar_pct'] = round(h['total_rupa'] / max_bhava * 100)
+
+            # The one period running at each level, for the summary and breadcrumb.
+            active_chain = [
+                dict(lvl['periods'][lvl['active_index']], level=lvl['level'])
+                for lvl in dasha_levels
+            ]
 
             context['panchang'] = panchang
-            context['kundli'] = kundli
-            context['north_indian_chart'] = _build_north_indian_chart(kundli)
+            context['moon'] = moon
+            context['active_chain'] = active_chain
+            context['kundli'] = chart
+            context['north_indian_chart'] = _build_north_indian_chart(chart)
             context['dashas'] = dashas
             context['dasha_levels'] = dasha_levels
             context['as_of_dt'] = as_of_dt
             context['shadbala'] = shadbala
             context['bhavabala'] = bhavabala
-        except Exception as exc:
+        except ValueError as exc:
             context['error'] = str(exc)
+        except Exception:
+            logger.exception('Kundli calculation failed')
+            context['error'] = 'Could not calculate the kundli for these details. Please check them and try again.'
 
-    return render(request, 'astro_lab.html', context)
+    return render(request, 'kundli.html', context)
