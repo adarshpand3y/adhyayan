@@ -161,12 +161,50 @@ def declination(body_name: str, dt_utc: datetime) -> float:
     return dec.degrees
 
 
-def declination_of_ecliptic_point(longitude: float, dt_utc: datetime) -> float:
-    """Declination of a point of ecliptic latitude 0 at the given tropical longitude
-    (used for Rahu/Ketu, which have no direct Skyfield body)."""
-    eps = math.radians(obliquity_of_ecliptic(dt_utc))
+def declination_of_ecliptic_point(longitude: float, dt_utc: datetime, obliquity: float = None) -> float:
+    """Declination of a point of ecliptic latitude 0 at the given tropical
+    longitude. Defaults to the true obliquity of date; pass `obliquity` to use
+    a fixed one (Ayana Bala uses the classical parama kranti of 24 degrees)."""
+    eps = math.radians(obliquity_of_ecliptic(dt_utc) if obliquity is None else obliquity)
     lam = math.radians(longitude)
     return math.degrees(math.asin(math.sin(eps) * math.sin(lam)))
+
+
+def sun_hour_angle(dt_utc: datetime, longitude_east: float) -> float:
+    """Local hour angle of the apparent Sun, in degrees on [-180, 180).
+
+    0 = local apparent noon, +/-180 = local apparent midnight. This is the
+    quantity Nathonnata Bala is built on (the classical "nata"/"unnata"), and
+    it already carries both the longitude correction and the equation of time.
+    """
+    t = to_skyfield_time(dt_utc)
+    ra, _, _ = _earth.at(t).observe(_BODIES["Sun"]).apparent().radec(epoch="date")
+    lst = local_sidereal_time_degrees(dt_utc, longitude_east)
+    return (lst - ra.hours * 15.0 + 180.0) % 360.0 - 180.0
+
+
+# Mean orbital longitudes (Meeus, Astronomical Algorithms ch. 31, mean equinox
+# of date): L = a0 + a1*T + a2*T^2 + a3*T^3, T in Julian centuries from J2000.
+# "Earth" doubles as the mean Sun (mean Sun = Earth's mean longitude + 180).
+_MEAN_LONGITUDE_TERMS = {
+    "Mercury": (252.250906, 149474.0722491, 0.00030350, 0.000000018),
+    "Venus": (181.979801, 58519.2130302, 0.00031014, 0.000000015),
+    "Earth": (100.466457, 35999.3728565, -0.00000568, -0.000000001),
+    "Mars": (355.433000, 19141.6964471, 0.00031052, 0.000000016),
+    "Jupiter": (34.351519, 3036.3027748, 0.00022330, 0.000000037),
+    "Saturn": (50.077444, 1223.5110686, 0.00051908, -0.000000030),
+}
+
+
+def mean_heliocentric_longitude(body_name: str, dt_utc: datetime) -> float:
+    """Mean (unperturbed, no equation of centre) heliocentric tropical longitude.
+
+    This is the modern equivalent of the classical "madhyama graha" that the
+    Chesta Kendra is built from.
+    """
+    t = (julian_day(dt_utc) - 2451545.0) / 36525.0
+    a0, a1, a2, a3 = _MEAN_LONGITUDE_TERMS[body_name]
+    return (a0 + a1 * t + a2 * t * t + a3 * t ** 3) % 360.0
 
 
 def daily_motion(body_name: str, dt_utc: datetime) -> float:

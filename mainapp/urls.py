@@ -24,5 +24,5 @@ urlpatterns = [
     path('jaap/<uuid:session_id>', views.jaap_room, name="jaap_room"),
     path('jaap/<uuid:session_id>/status', views.jaap_status, name="jaap_status"),
     path('jaap/<uuid:session_id>/increment', views.jaap_increment, name="jaap_increment"),
-    # path('astro-lab', views.astro_lab, name="astro_lab"),
+    path('kundli', views.kundli, name="kundli"),
 ]
